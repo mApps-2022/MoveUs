@@ -2,7 +2,7 @@
     package="com.example.front_end">
    <application
         android:label="front_end"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
