@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+//import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'login_form.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -16,11 +18,8 @@ class _LoginPageState extends State<LoginPage> {
         return Navigator.maybePop(context);
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('title'),
-        ),
         body: Center(
-          child: Text(AppLocalizations.of(context)?.hello ?? 'putaaa'),
+          child: LoginForm(),
         ),
       ),
     );

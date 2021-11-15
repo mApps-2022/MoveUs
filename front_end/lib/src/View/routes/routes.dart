@@ -3,6 +3,7 @@ import 'package:front_end/src/View/pages/Login/login_app_page.dart';
 
 Map<String, WidgetBuilder> getAppRoutes() {
   return <String, WidgetBuilder>{
-    '/': (BuildContext context) => LoginPage(),
+    '/': (BuildContext context) => LoginPage(), //Poner SplashScreen
+    //'/': (BuildContext context) => SplashScreen(),
   };
 }
