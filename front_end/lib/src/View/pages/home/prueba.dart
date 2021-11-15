@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapSample extends StatefulWidget {
   @override
@@ -10,10 +11,26 @@ class MapSample extends StatefulWidget {
 class MapSampleState extends State<MapSample> {
   Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+   Position _currentPosition = new Position();
+
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  _getCurrentLocation() {
+    Geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best, forceAndroidLocationManager: true)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }).catchError((e) {
+      print(e);
+    });
+  }
 
 
   @override
@@ -21,7 +38,10 @@ class MapSampleState extends State<MapSample> {
     return new Scaffold(
       body: GoogleMap(
         mapType: MapType.normal,
-        initialCameraPosition: _kGooglePlex,
+        initialCameraPosition: CameraPosition(
+          target: LatLng(_currentPosition.latitude!=null?_currentPosition.latitude:4.6486259 , _currentPosition.longitude!=null?_currentPosition.latitude:-74.2482358),
+          zoom: 14.4746,
+        ),
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },
