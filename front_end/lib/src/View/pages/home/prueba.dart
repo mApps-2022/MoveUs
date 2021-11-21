@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 
 class MapSample extends StatefulWidget {
   @override
@@ -18,26 +18,47 @@ class MapSampleState extends State<MapSample> {
   }
   Completer<GoogleMapController> _controller = Completer();
 
-   Position _currentPosition = new Position();
+
+  double latitude = 4.72;
+  double longitude = -72.76;
+
+  Location location = new Location();
 
 
   @override
   void initState() {
-    super.initState();
-    _getCurrentLocation();
+    getLocation();
   }
 
-  _getCurrentLocation() {
-    Geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best, forceAndroidLocationManager: true)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-    }).catchError((e) {
-      print(e);
-    });
+  Future<void> getLocation() async{
+
+
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+
+
+  _serviceEnabled = await location.serviceEnabled();
+  if (!_serviceEnabled) {
+    _serviceEnabled = await location.requestService();
+    if (!_serviceEnabled) {
+      return;
+    }
   }
+
+  _permissionGranted = await location.hasPermission();
+  if (_permissionGranted == PermissionStatus.denied) {
+    _permissionGranted = await location.requestPermission();
+    if (_permissionGranted != PermissionStatus.granted) {
+      return;
+    }
+  }
+
+  LocationData _currentPosition = await location.getLocation();
+  latitude =  _currentPosition.latitude!.toDouble();
+  longitude= _currentPosition.longitude!.toDouble();
+
+}
+
 
 
   @override
@@ -46,11 +67,16 @@ class MapSampleState extends State<MapSample> {
       body: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: CameraPosition(
-          target: LatLng(_currentPosition.latitude!=null?_currentPosition.latitude:4.6486259 , _currentPosition.longitude!=null?_currentPosition.latitude:-74.2482358),
+          target: LatLng(latitude,longitude),
           zoom: 14.4746,
         ),
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
+          location.onLocationChanged.listen((l) {controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(target: LatLng(l.latitude!.toDouble(), l.longitude!.toDouble()),zoom: 15),
+            ),
+          ); });
         },
       ),
       bottomNavigationBar: BottomNavigationBar(items: const<BottomNavigationBarItem>[
