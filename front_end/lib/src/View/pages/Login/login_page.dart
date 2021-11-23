@@ -1,8 +1,10 @@
-//import 'package:auth_buttons/auth_buttons.dart';
-import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:auth_buttons/auth_buttons.dart';
 //import 'package:flutter_svg/svg.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
 import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
 
@@ -36,8 +38,7 @@ class _LoginPageState extends State<LoginPage> {
               _imageLogo(),
               Container(
                 child: Text(
-                  //AppLocalizations.of(context)!.register_title
-                  "Ingresa a tu cuenta",
+                  AppLocalizations.of(context)!.login_title,
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'OpenSans',
@@ -107,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailField(LoginBloc loginBloc) {
     return TextField(
       decoration: _decorationField(
-          "Correo",
+          AppLocalizations.of(context)!.login_email_field_label,
           Icon(
             Icons.email,
             color: Colors.grey,
@@ -123,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _phoneField(LoginBloc loginBloc) {
     return TextField(
       decoration: _decorationField(
-          "Numero telefonico",
+          AppLocalizations.of(context)!.login_phone_field_label,
           Icon(
             Icons.phone,
             color: Colors.grey,
@@ -140,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _passwordField(LoginBloc loginBloc) {
     return TextField(
       decoration: _decorationField(
-          "Password",
+          AppLocalizations.of(context)!.login_password_field_label,
           Icon(
             Icons.password,
             color: Colors.grey,
@@ -155,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _googleLoginButton() {
     return GoogleAuthButton(
       onPressed: () {},
-      text: 'Iniciar sesión con Google',
+      text: AppLocalizations.of(context)!.login_button_login_google,
       darkMode: false,
     );
   }
@@ -181,13 +182,13 @@ class ButtomWidget extends StatelessWidget {
               FloatingActionButton.extended(
                 backgroundColor: snapshot.hasData ? Color.fromRGBO(83, 232, 139, 1) : Colors.grey[400],
                 onPressed: snapshot.hasData ? () => print('Hace login') : null,
-                label: Text('Iniciar sesión'),
+                label: Text(AppLocalizations.of(context)!.login_button_login),
               ),
               SizedBox(width: 20.0),
               FloatingActionButton.extended(
                 backgroundColor: Color.fromRGBO(83, 232, 139, 1),
                 onPressed: () => print('pasa register'),
-                label: Text('Crear Cuenta'),
+                label: Text(AppLocalizations.of(context)!.login_button_create_account),
               ),
             ],
           ),
