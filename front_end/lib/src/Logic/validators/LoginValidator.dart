@@ -13,4 +13,16 @@ class LoginValidator {
       }
     }
   });
+  final validatePassword = StreamTransformer<String, String>.fromHandlers(handleData: (password, sink) {
+    if (password == null) {
+      sink.addError('');
+    } else {
+      RegExp regExp = new RegExp(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$");
+      if (regExp.hasMatch(password)) {
+        sink.add(password);
+      } else {
+        sink.addError('Contraseña no valida (Minimum eight characters, at least one letter and one number)');
+      }
+    }
+  });
 }

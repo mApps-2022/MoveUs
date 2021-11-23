@@ -8,7 +8,7 @@ class LoginBloc with LoginValidator {
 
   Stream<String> get emailStream => _emailControler.stream.transform(validateEmail);
   Stream<String> get phoneNumberStream => _phoneNumberControler.stream;
-  Stream<String> get passwordStream => _passwordControler.stream;
+  Stream<String> get passwordStream => _passwordControler.stream.transform(validatePassword);
   Stream<bool> get validateBasicForm => Rx.combineLatest3(emailStream, phoneNumberStream, passwordStream, (a, b, c) => true);
 
   Function(String) get changeEmail => _emailControler.sink.add;
