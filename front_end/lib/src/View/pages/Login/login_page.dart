@@ -34,6 +34,18 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             children: [
               _imageLogo(),
+              Container(
+                child: Text(
+                  //AppLocalizations.of(context)!.register_title
+                  "Ingresa a tu cuenta",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'OpenSans',
+                    color: Color.fromRGBO(9, 5, 28, 1),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
               SizedBox(height: 20),
               StreamBuilder<Object>(
                   stream: null,
