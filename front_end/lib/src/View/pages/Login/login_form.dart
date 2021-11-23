@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_end/src/View/pages/Login/google_login_button.dart';
-import 'package:front_end/src/View/pages/Login/login_button.dart';
-import 'package:front_end/src/View/pages/Login/register_button.dart';
+import 'package:auth_buttons/auth_buttons.dart';
 
 class LoginForm extends StatefulWidget {
   LoginForm({Key? key}) : super(key: key);
@@ -63,4 +61,40 @@ class _LoginFormState extends State<LoginForm> {
   void _onEmailChanged() {}
 
   void _onPasswordChanged() {}
+}
+
+class RegisterButton extends StatelessWidget {
+  RegisterButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      //style: style,
+      child: Text('Create account'),
+      onPressed: null,
+    );
+  }
+}
+
+class LoginButton extends StatelessWidget {
+  LoginButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      //style: style,
+      child: Text('Login'),
+      onPressed: null,
+    );
+  }
+}
+
+class GoogleLoginButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GoogleAuthButton(
+      onPressed: () {},
+      darkMode: false, // if true second example
+    );
+  }
 }
