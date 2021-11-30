@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:front_end/src/Logic/bloc/ProviderBloc.dart';
+import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
 import 'package:front_end/src/View/routes/routes.dart';
 
 class MyApp extends StatefulWidget {

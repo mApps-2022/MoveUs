@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:front_end/src/View/pages/Login/login_app_page.dart';
-import 'package:front_end/src/View/pages/Login/test.dart';
+import 'package:front_end/src/View/pages/Login/login_page.dart';
 
 Map<String, WidgetBuilder> getAppRoutes() {
   return <String, WidgetBuilder>{
-    '/': (BuildContext context) => LoginPage(),
-    'test': (BuildContext context) => AuthApp(),
+    '/': (BuildContext context) => LoginPage(), //Poner SplashScreen
+    //'/': (BuildContext context) => SplashScreen(),
   };
 }
