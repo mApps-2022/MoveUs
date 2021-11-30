@@ -20,7 +20,10 @@ class _LoginPageState extends State<LoginPage> {
           title: Text('title'),
         ),
         body: Center(
-          child: Text(AppLocalizations.of(context)?.hello ?? 'putaaa'),
+          child: TextButton(
+            child: Text("Entrar al login"),
+            onPressed: () => Navigator.pushNamed(context, 'test'),
+          ),
         ),
       ),
     );
