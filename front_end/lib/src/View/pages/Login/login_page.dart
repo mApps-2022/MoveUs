@@ -1,3 +1,5 @@
+// ignore_for_file: argument_type_not_assignable_to_error_handler
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,6 +9,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
 import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
+import 'package:front_end/src/Logic/utils/auth_utils.dart';
+import 'package:front_end/src/View/pages/Login/lower_buttons.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -53,8 +57,8 @@ class _LoginPageState extends State<LoginPage> {
                   builder: (context, snapshot) {
                     return form(loginBloc);
                   }),
-              _paddingField(ButtomWidget(stream: loginBloc.validateBasicForm)),
-              _paddingField(_googleLoginButton()),
+              _paddingField(ButtonsWidget(bloc: loginBloc)),
+              _paddingField(_googleLoginButton(context)),
             ],
           ),
         )
@@ -116,7 +120,6 @@ class _LoginPageState extends State<LoginPage> {
       onChanged: (value) => {
         loginBloc.changeEmail(value),
       },
-      obscureText: false,
       keyboardType: TextInputType.emailAddress,
     );
   }
@@ -153,47 +156,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _googleLoginButton() {
+  Widget _googleLoginButton(BuildContext context) {
     return GoogleAuthButton(
-      onPressed: () {},
+      onPressed: () {
+        Auth.signInWithGoogle(context);
+      },
       text: AppLocalizations.of(context)!.login_button_login_google,
       darkMode: false,
-    );
-  }
-}
-
-class ButtomWidget extends StatelessWidget {
-  const ButtomWidget({
-    Key? key,
-    required this.stream,
-  }) : super(key: key);
-
-  final Stream stream;
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: stream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FloatingActionButton.extended(
-                backgroundColor: snapshot.hasData ? Color.fromRGBO(83, 232, 139, 1) : Colors.grey[400],
-                onPressed: snapshot.hasData ? () => print('Hace login') : null,
-                label: Text(AppLocalizations.of(context)!.login_button_login),
-              ),
-              SizedBox(width: 20.0),
-              FloatingActionButton.extended(
-                backgroundColor: Color.fromRGBO(83, 232, 139, 1),
-                onPressed: () => print('pasa register'),
-                label: Text(AppLocalizations.of(context)!.login_button_create_account),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }
