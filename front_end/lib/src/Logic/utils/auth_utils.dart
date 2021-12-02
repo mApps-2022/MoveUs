@@ -25,9 +25,9 @@ class Auth {
     }
   }
 
-  static Future<User?> signUp(BuildContext context, LoginBloc bloc, User? user) async {
+  static Future<User?> signUp(BuildContext context, {required String email, required String password}) async {
     try {
-      FirebaseAuth.instance.createUserWithEmailAndPassword(email: bloc.email!, password: bloc.password!).then((value) {
+      FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value) {
         print("Retorno: $value");
       });
     } on FirebaseAuthException catch (e) {

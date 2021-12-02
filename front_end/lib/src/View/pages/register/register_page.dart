@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
 import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
+import 'package:front_end/src/Logic/utils/auth_utils.dart';
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -32,7 +33,10 @@ class _RegisterPageState extends State<RegisterPage> {
           child: ButtomWidget(
             //stream: registerBloc.validateBasicForm,
             stream: null,
-            function: () => Navigator.pushReplacementNamed(context, 'register/foto'),
+            function: () => {
+              Auth.signUp(context, email: registerBloc.email!, password: registerBloc.password!),
+              Navigator.pushReplacementNamed(context, 'register/foto'),
+            },
             text: 'crear cuenta',
             enebleColor: Color.fromRGBO(83, 232, 139, 1),
             disableColor: Colors.grey[400]!,

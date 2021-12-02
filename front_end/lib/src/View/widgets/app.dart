@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        initialRoute: 'register',
+        initialRoute: '/',
         routes: getAppRoutes(),
       ),
     );

@@ -32,7 +32,7 @@ class ButtonsWidget extends StatelessWidget {
               FloatingActionButton.extended(
                 heroTag: "register",
                 backgroundColor: Color.fromRGBO(83, 232, 139, 1),
-                onPressed: () => print('pasa register'),
+                onPressed: () => Navigator.pushReplacementNamed(context, 'register'),
                 label: Text(
                   AppLocalizations.of(context)!.login_button_create_account,
                   style: TextStyle(fontFamily: 'OpenSans', fontWeight: FontWeight.w900),
