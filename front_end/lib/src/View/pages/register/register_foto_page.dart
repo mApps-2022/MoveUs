@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:front_end/src/Logic/bloc/ProviderBloc.dart';
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
+import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
 
 class RegisteFotoPage extends StatefulWidget {
