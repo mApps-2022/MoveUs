@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front_end/src/Logic/bloc/ProviderBloc.dart';
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
+import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key? key}) : super(key: key);
@@ -28,7 +29,14 @@ class _RegisterPageState extends State<RegisterPage> {
         body: body(context, registerBloc),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: ButtomWidget(stream: registerBloc.validateBasicForm),
+          child: ButtomWidget(
+            //stream: registerBloc.validateBasicForm,
+            stream: null,
+            function: () => Navigator.pushReplacementNamed(context, 'register/foto'),
+            text: 'crear cuenta',
+            enebleColor: Color.fromRGBO(83, 232, 139, 1),
+            disableColor: Colors.grey[400]!,
+          ),
         ),
       ),
     );
@@ -85,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: TextField(
             decoration: InputDecoration(
               //hintText: "Your Name",
-              labelText: "Nombre",
+              labelText: AppLocalizations.of(context)!.name,
               labelStyle: TextStyle(fontSize: 14, color: Colors.black),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -284,7 +292,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         filled: true,
 
                         prefixIcon: Icon(
-                          Icons.time_to_leave,
+                          Icons.calendar_view_day,
                           color: Colors.grey,
                         ),
 
@@ -344,7 +352,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         filled: true,
 
                         prefixIcon: Icon(
-                          Icons.local_convenience_store_sharp,
+                          Icons.time_to_leave,
                           color: Colors.grey,
                         ),
 
@@ -358,31 +366,6 @@ class _RegisterPageState extends State<RegisterPage> {
               )
             : Container(),
       ],
-    );
-  }
-}
-
-class ButtomWidget extends StatelessWidget {
-  const ButtomWidget({
-    Key? key,
-    required this.stream,
-  }) : super(key: key);
-
-  final Stream stream;
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: stream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-          child: FloatingActionButton.extended(
-            backgroundColor: snapshot.hasData ? Color.fromRGBO(83, 232, 139, 1) : Colors.grey[400],
-            onPressed: snapshot.hasData ? () => print('pasa') : null,
-            label: Text('Crear Cuenta'),
-          ),
-        );
-      },
     );
   }
 }
