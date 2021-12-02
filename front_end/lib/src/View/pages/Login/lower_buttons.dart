@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:front_end/generated/l10n.dart';
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:front_end/src/Logic/utils/auth_utils.dart';
 
 class ButtonsWidget extends StatelessWidget {
@@ -24,7 +24,7 @@ class ButtonsWidget extends StatelessWidget {
                 backgroundColor: snapshot.hasData ? Color.fromRGBO(83, 232, 139, 1) : Colors.grey[400],
                 onPressed: snapshot.hasData ? () => Auth.loginWithEmailAndPassword(context, bloc, user) : null,
                 label: Text(
-                  AppLocalizations.of(context)!.login_button_login,
+                  S.of(context).login_button_login,
                   style: TextStyle(fontFamily: 'OpenSans', fontWeight: FontWeight.w900),
                 ),
               ),
@@ -32,9 +32,9 @@ class ButtonsWidget extends StatelessWidget {
               FloatingActionButton.extended(
                 heroTag: "register",
                 backgroundColor: Color.fromRGBO(83, 232, 139, 1),
-                onPressed: () => print('pasa register'),
+                onPressed: () => Navigator.pushReplacementNamed(context, 'register'),
                 label: Text(
-                  AppLocalizations.of(context)!.login_button_create_account,
+                  S.of(context).login_button_create_account,
                   style: TextStyle(fontFamily: 'OpenSans', fontWeight: FontWeight.w900),
                 ),
               ),

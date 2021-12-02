@@ -1,14 +1,55 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:front_end/src/View/utils/env_load_util.dart';
-import 'package:front_end/src/View/utils/env_util.dart';
-import 'package:front_end/src/View/widgets/app.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:front_end/generated/l10n.dart';
+import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
+import 'package:front_end/src/Logic/bloc/registerBloc.dart';
+import 'package:front_end/src/Logic/provider/ProvidetBlocs.dart';
 
-Future<void> main() async {
+import 'package:front_end/src/View/routes/routes.dart';
+import 'package:provider/provider.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  final envLoadUtil = EnvLoadUtil();
-  Map<String, String> env = await loadEnvFile("assets/env/.env_dev");
-  envLoadUtil.loadEnv(env);
-  runApp(MyApp(env));
+  await dotenv.load(fileName: "assets/env/.env_dev");
+  //Provider.debugCheckInvalidValueType = null;
+  runApp(MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  //final Map<String, String> env;
+  const MyApp();
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return Provider(
+      create: (context) => ProviderBlocs(),
+      child: Builder(builder: (context) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          initialRoute: '/',
+          routes: getAppRoutes(),
+          builder: (context, child) {
+            EasyLoading.init();
+            return MediaQuery(data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: child!);
+          },
+        );
+      }),
+    );
+  }
 }

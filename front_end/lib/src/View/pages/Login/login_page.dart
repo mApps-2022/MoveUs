@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:auth_buttons/auth_buttons.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:flutter_svg/svg.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:front_end/generated/l10n.dart';
 
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
-import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
+import 'package:front_end/src/Logic/provider/ProvidetBlocs.dart';
+
 import 'package:front_end/src/Logic/utils/auth_utils.dart';
 import 'package:front_end/src/View/pages/Login/lower_buttons.dart';
+import 'package:provider/src/provider.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -22,7 +25,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    LoginBloc loginBloc = Provider.loginBloc(context);
+    LoginBloc loginBloc = context.read<ProviderBlocs>().login;
     return WillPopScope(
       onWillPop: () {
         return Navigator.maybePop(context);
@@ -42,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
               _imageLogo(),
               Container(
                 child: Text(
-                  AppLocalizations.of(context)!.login_title,
+                  S.of(context).login_title,
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'OpenSans',
@@ -112,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailField(LoginBloc loginBloc) {
     return TextField(
       decoration: _decorationField(
-          AppLocalizations.of(context)!.login_email_field_label,
+          dotenv.get('PRUEBA'),
           Icon(
             Icons.email,
             color: Colors.grey,
@@ -127,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _phoneField(LoginBloc loginBloc) {
     return TextField(
       decoration: _decorationField(
-          AppLocalizations.of(context)!.login_phone_field_label,
+          S.of(context).login_phone_field_label,
           Icon(
             Icons.phone,
             color: Colors.grey,
@@ -144,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _passwordField(LoginBloc loginBloc) {
     return TextField(
       decoration: _decorationField(
-          AppLocalizations.of(context)!.login_password_field_label,
+          S.of(context).login_password_field_label,
           Icon(
             Icons.password,
             color: Colors.grey,
@@ -161,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () {
         Auth.signInWithGoogle(context);
       },
-      text: AppLocalizations.of(context)!.login_button_login_google,
+      text: S.of(context).login_button_login_google,
       darkMode: false,
     );
   }
