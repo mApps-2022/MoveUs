@@ -9,7 +9,7 @@
             "name": "FrontEnd",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main/main.dart",
+            "program": "lib/Main/main.dart",
         },
         
     ]

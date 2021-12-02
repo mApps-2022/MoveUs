@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
-import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
+import 'package:front_end/src/Logic/provider/ProvidetBlocs.dart';
+
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
+import 'package:provider/src/provider.dart';
 
 class RegisteFotoPage extends StatefulWidget {
   RegisteFotoPage({Key? key}) : super(key: key);
@@ -14,7 +16,7 @@ class RegisteFotoPage extends StatefulWidget {
 class _RegisteFotoPageState extends State<RegisteFotoPage> {
   @override
   Widget build(BuildContext context) {
-    RegisterBloc registerBloc = Provider.registerBloc(context);
+    RegisterBloc registerBloc = context.read<ProviderBlocs>().register;
     return WillPopScope(
       onWillPop: () {
         return Navigator.maybePop(context);

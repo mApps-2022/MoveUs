@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
-import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
 
-class HomeTest extends StatelessWidget {
+class HomeTest extends StatefulWidget {
   const HomeTest({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    LoginBloc loginBloc = Provider.loginBloc(context);
+  State<HomeTest> createState() => _HomeTestState();
+}
 
-    return StreamBuilder(
-      stream: loginBloc.userStateStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Scaffold(
-          appBar: AppBar(title: snapshot.hasData ? Text("Bienvenido ${snapshot.data}") : Text("No iniciado")),
-        );
-      },
+class _HomeTestState extends State<HomeTest> {
+  int a = 1;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            child: Center(
+              child: Text('hola ${a.toString()}'),
+            ),
+          ),
+          FloatingActionButton(
+              onPressed: () => {
+                    setState(() {
+                      a = a + 2;
+                      print(a);
+                    }),
+                  })
+        ],
+      ),
     );
   }
 }

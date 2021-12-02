@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:front_end/generated/l10n.dart';
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
-import 'package:front_end/src/Logic/provider/ProviderBloc.dart';
+import 'package:front_end/src/Logic/provider/ProvidetBlocs.dart';
+
 import 'package:front_end/src/Logic/utils/auth_utils.dart';
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
+import 'package:provider/src/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key? key}) : super(key: key);
@@ -17,7 +19,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
-    RegisterBloc registerBloc = Provider.registerBloc(context);
+    RegisterBloc registerBloc = context.read<ProviderBlocs>().register;
     if (registerBloc.isDriver == null) {
       registerBloc.changeIsDriver(false);
     }
@@ -31,13 +33,13 @@ class _RegisterPageState extends State<RegisterPage> {
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(10.0),
           child: ButtomWidget(
-            //stream: registerBloc.validateBasicForm,
-            stream: null,
+            stream: registerBloc.validateBasicForm,
+            //stream: null,
             function: () => {
               Auth.signUp(context, email: registerBloc.email!, password: registerBloc.password!),
               Navigator.pushReplacementNamed(context, 'register/foto'),
             },
-            text: 'crear cuenta',
+            text: S.of(context).continue_label,
             enebleColor: Color.fromRGBO(83, 232, 139, 1),
             disableColor: Colors.grey[400]!,
           ),
@@ -65,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               Container(
                 child: Text(
-                  AppLocalizations.of(context)!.register_title,
+                  S.of(context).register_title,
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'OpenSans',
@@ -97,7 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: TextField(
             decoration: InputDecoration(
               //hintText: "Your Name",
-              labelText: AppLocalizations.of(context)!.name,
+              labelText: S.of(context).name,
               labelStyle: TextStyle(fontSize: 14, color: Colors.black),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
