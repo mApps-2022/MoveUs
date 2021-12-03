@@ -16,9 +16,7 @@ class Sidebar extends StatelessWidget {
             ),
             decoration: BoxDecoration(
                 color: Colors.green,
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/cover.jpg'))),
+            ),
           ),
           ListTile(
             leading: Icon(Icons.input),

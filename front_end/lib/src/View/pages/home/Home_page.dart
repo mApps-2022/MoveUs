@@ -86,14 +86,15 @@ class HomePageState extends State<HomePage> {
 
           _controller.complete(controller);
           location.onLocationChanged.listen((l) {
-            //locationbloc.changeCurrentloc(l);
+            locationbloc.changeCurrentloc(l);
             controller.animateCamera(
             CameraUpdate.newCameraPosition(
-              CameraPosition(target: LatLng(l.latitude!.toDouble(), l.longitude!.toDouble()),zoom: 15),
+              CameraPosition(target: LatLng(locationbloc.currentloc!.latitude!.toDouble(), locationbloc.currentloc!.longitude!.toDouble()),zoom: 15),
             ),
           ); });
         },
       ),
+
       bottomNavigationBar: BottomNavigationBar(items: const<BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.home),
         label: 'Home'),
