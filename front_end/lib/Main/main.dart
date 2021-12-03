@@ -6,7 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:front_end/generated/l10n.dart';
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
-import 'package:front_end/src/Logic/provider/ProvidetBlocs.dart';
+import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
 
 import 'package:front_end/src/View/routes/routes.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: S.delegate.supportedLocales,
-          initialRoute: '/',
+          initialRoute: 'home',
           routes: getAppRoutes(),
           builder: (context, child) {
             EasyLoading.init();

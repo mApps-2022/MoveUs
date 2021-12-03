@@ -1,63 +1,21 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:front_end/src/Logic/bloc/LocationBloc.dart';
+import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
+import 'package:front_end/src/View/widgets/shared/form/Sidebar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:provider/src/provider.dart';
 
-class MapSample extends StatefulWidget {
+
+class HomePage extends StatefulWidget {
   @override
-  State<MapSample> createState() => MapSampleState();
+  State<HomePage> createState() => HomePageState();
 }
 
-class NavDrawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            child: Text(
-              'Move us',
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            ),
-            decoration: BoxDecoration(
-                color: Colors.green,
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/cover.jpg'))),
-          ),
-          ListTile(
-            leading: Icon(Icons.input),
-            title: Text('Welcome'),
-            onTap: () => {},
-          ),
-          ListTile(
-            leading: Icon(Icons.verified_user),
-            title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: Icon(Icons.border_color),
-            title: Text('Feedback'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-        ],
-      ),
-    );
-  }
-}
 
-class MapSampleState extends State<MapSample> {
+
+class HomePageState extends State<HomePage> {
   int  _indexseleccionado=0;
   PageController pageController= new PageController();
   void _onItemTapped(int index) {
@@ -112,8 +70,9 @@ class MapSampleState extends State<MapSample> {
 
   @override
   Widget build(BuildContext context) {
+    LocationBloc locationbloc=context.read<ProviderBlocs>().location;
     return new Scaffold(
-      drawer: NavDrawer(),
+      drawer: Sidebar(),
       appBar: AppBar(
         title: Text('Move us'),
       ),
@@ -124,8 +83,11 @@ class MapSampleState extends State<MapSample> {
           zoom: 14.4746,
         ),
         onMapCreated: (GoogleMapController controller) {
+
           _controller.complete(controller);
-          location.onLocationChanged.listen((l) {controller.animateCamera(
+          location.onLocationChanged.listen((l) {
+            //locationbloc.changeCurrentloc(l);
+            controller.animateCamera(
             CameraUpdate.newCameraPosition(
               CameraPosition(target: LatLng(l.latitude!.toDouble(), l.longitude!.toDouble()),zoom: 15),
             ),

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front_end/generated/l10n.dart';
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
-import 'package:front_end/src/Logic/provider/ProvidetBlocs.dart';
+import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
 
 import 'package:front_end/src/Logic/utils/auth_utils.dart';
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
