@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
-import 'package:front_end/src/Logic/provider/ProvidetBlocs.dart';
+import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
 
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
 import 'package:provider/src/provider.dart';
