@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-
 class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class Sidebar extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
             decoration: BoxDecoration(
-                color: Colors.green,
+              color: Colors.green,
             ),
           ),
           ListTile(
@@ -41,7 +40,11 @@ class Sidebar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              Navigator.of(context).pop();
+              //Navigator.of(context).push();
+              //Navigator.pushReplacementNamed(context, 'register');
+            },
           ),
         ],
       ),

@@ -8,6 +8,7 @@ import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:flutter_svg/svg.dart';
 import 'package:front_end/generated/l10n.dart';
+import 'package:front_end/src/Logic/bloc/ForgotPassBloc.dart';
 
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
 import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
@@ -17,28 +18,28 @@ import 'package:front_end/src/View/pages/Login/lower_buttons.dart';
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
 import 'package:provider/src/provider.dart';
 
-class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+class ForgotPassPage extends StatefulWidget {
+  ForgotPassPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _ForgotPassPageState createState() => _ForgotPassPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ForgotPassPageState extends State<ForgotPassPage> {
   @override
   Widget build(BuildContext context) {
-    LoginBloc loginBloc = context.read<ProviderBlocs>().login;
+    ForgotPassBloc forgotPassBloc = context.read<ProviderBlocs>().forgotPass;
     return WillPopScope(
       onWillPop: () {
         return Navigator.maybePop(context);
       },
       child: Scaffold(
-        body: body(context, loginBloc),
+        body: body(context, forgotPassBloc),
       ),
     );
   }
 
-  Stack body(BuildContext context, LoginBloc loginBloc) {
+  Stack body(BuildContext context, ForgotPassBloc forgotPassBloc) {
     return Stack(
       children: [
         SingleChildScrollView(
@@ -47,7 +48,8 @@ class _LoginPageState extends State<LoginPage> {
               _imageLogo(),
               Container(
                 child: Text(
-                  S.of(context).login_title,
+                  //S.of(context).login_title,
+                  'Recover password',
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'OpenSans',
@@ -60,11 +62,20 @@ class _LoginPageState extends State<LoginPage> {
               StreamBuilder<Object>(
                   stream: null,
                   builder: (context, snapshot) {
-                    return form(loginBloc);
+                    return form(forgotPassBloc);
                   }),
-              _forgotPassword(),
-              _paddingField(ButtonsWidget(bloc: loginBloc)),
-              _paddingField(_googleLoginButton(context)),
+              _loginTextButton(),
+              ButtomWidget(
+                //stream: forgotPassBloc.validateBasicForm,
+                stream: null,
+                function: () => {
+                  //Auth.signUp(context, email: registerBloc.email!, password: forgotPassBloc.password!),
+                  //Navigator.pushReplacementNamed(context, 'register/foto'),
+                },
+                text: S.of(context).continue_label,
+                enebleColor: Color.fromRGBO(83, 232, 139, 1),
+                disableColor: Colors.grey[400]!,
+              ),
               _createAccount(),
             ],
           ),
@@ -73,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Container _forgotPassword() {
+  Container _loginTextButton() {
     TextStyle linkStyle = TextStyle(
       fontSize: 14,
       fontFamily: 'OpenSans',
@@ -89,11 +100,11 @@ class _LoginPageState extends State<LoginPage> {
             text: TextSpan(
               children: [
                 TextSpan(
-                    text: 'Forgot your password?',
+                    text: 'Do you want to login?',
                     style: linkStyle,
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        Navigator.pushReplacementNamed(context, 'forgotPass');
+                        Navigator.pushReplacementNamed(context, '/');
                       }),
               ],
             ),
@@ -125,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
             text: TextSpan(
               style: defaultStyle,
               children: <TextSpan>[
-                TextSpan(text: 'Don\'t have an account? '),
+                TextSpan(text: 'Don\'t have account? '),
                 TextSpan(
                     text: 'Create a new account',
                     style: linkStyle,
@@ -153,12 +164,10 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Column form(LoginBloc loginBloc) {
+  Column form(ForgotPassBloc forgotPassBloc) {
     return Column(
       children: [
-        _paddingField(_emailField(loginBloc)),
-        //_paddingField(_phoneField(loginBloc)),
-        _paddingField(_passwordField(loginBloc)),
+        _paddingField(_emailField(forgotPassBloc)),
       ],
     );
   }
@@ -184,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _emailField(LoginBloc loginBloc) {
+  Widget _emailField(ForgotPassBloc forgotPassBloc) {
     return TextField(
       decoration: _decorationField(
           S.of(context).login_email_field_label,
@@ -193,51 +202,9 @@ class _LoginPageState extends State<LoginPage> {
             color: Colors.grey,
           )),
       onChanged: (value) => {
-        loginBloc.changeEmail(value),
+        forgotPassBloc.changeEmail(value),
       },
       keyboardType: TextInputType.emailAddress,
-    );
-  }
-
-  Widget _phoneField(LoginBloc loginBloc) {
-    return TextField(
-      decoration: _decorationField(
-          S.of(context).login_phone_field_label,
-          Icon(
-            Icons.phone,
-            color: Colors.grey,
-          )),
-      onChanged: (value) => {
-        loginBloc.changePhoneNumber(value),
-      },
-      obscureText: false,
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter(RegExp("[0-9 \]"), allow: true)],
-    );
-  }
-
-  Widget _passwordField(LoginBloc loginBloc) {
-    return TextField(
-      decoration: _decorationField(
-          S.of(context).login_password_field_label,
-          Icon(
-            Icons.password,
-            color: Colors.grey,
-          )),
-      onChanged: (value) => {
-        loginBloc.changePassword(value),
-      },
-      obscureText: true,
-    );
-  }
-
-  Widget _googleLoginButton(BuildContext context) {
-    return GoogleAuthButton(
-      onPressed: () {
-        Auth.signInWithGoogle(context);
-      },
-      text: S.of(context).login_button_login_google,
-      darkMode: false,
     );
   }
 }

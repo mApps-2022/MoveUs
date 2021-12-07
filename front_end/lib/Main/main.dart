@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: S.delegate.supportedLocales,
-          initialRoute: 'home',
+          initialRoute: '/',
           routes: getAppRoutes(),
           builder: (context, child) {
             EasyLoading.init();
