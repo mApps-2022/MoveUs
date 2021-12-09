@@ -8,14 +8,16 @@
             "name": "front_end",
             "cwd": "front_end",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "program": "lib/main/main.dart",
         },
         {
             "name": "front_end (profile mode)",
             "cwd": "front_end",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "program": "lib/main/main.dart",
         }
     ]
 }
