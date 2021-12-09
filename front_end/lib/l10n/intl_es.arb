@@ -1,6 +1,7 @@
 {
     "continue_label": "Continuar",
     "hello": "hola",
+    "invalid_password": "Contraseña Invalida",
     "login_button_create_account": "Crear cuenta",
     "login_button_login": "Iniciar sesión",
     "login_button_login_google": "Iniciar sesión con google",

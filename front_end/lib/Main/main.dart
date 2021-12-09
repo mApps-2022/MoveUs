@@ -4,10 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:front_end/generated/l10n.dart';
-import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
-import 'package:front_end/src/Logic/bloc/registerBloc.dart';
-import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
 
+import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
 import 'package:front_end/src/View/routes/routes.dart';
 import 'package:provider/provider.dart';
 

@@ -70,6 +70,16 @@ class S {
     );
   }
 
+  /// `Invalid password`
+  String get invalid_password {
+    return Intl.message(
+      'Invalid password',
+      name: 'invalid_password',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Create account`
   String get login_button_create_account {
     return Intl.message(
