@@ -40,11 +40,13 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: S.delegate.supportedLocales,
-          initialRoute: 'home',
+          initialRoute: '/',
           routes: getAppRoutes(),
           builder: (context, child) {
             EasyLoading.init();
-            return MediaQuery(data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: child!);
+            return MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                child: child!);
           },
         );
       }),

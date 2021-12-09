@@ -1,7 +1,14 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:path/path.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Auth {
   static Future<User?> loginWithEmailAndPassword(BuildContext context, LoginBloc bloc, User? user) async {
@@ -25,10 +32,12 @@ class Auth {
     }
   }
 
-  static Future<User?> signUp(BuildContext context, {required String email, required String password}) async {
+  static Future<User?> signUp(BuildContext context, {required email, required displayName, required password}) async {
     try {
       FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value) {
         print("Retorno: $value");
+        User? currentUser = FirebaseAuth.instance.currentUser;
+        currentUser?.updateDisplayName(displayName);
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -57,5 +66,31 @@ class Auth {
 
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  static Future<String> uploadProfilePicture(BuildContext context, File imageFile) async {
+    String fileName = basename(imageFile.path);
+    final destination = 'files/$fileName';
+    try {
+      Reference database = FirebaseStorage.instance.ref(destination);
+      firebase_storage.TaskSnapshot uploadTask = await database.putFile(imageFile);
+      var dowurl = await uploadTask.ref.getDownloadURL();
+      String url = dowurl.toString();
+      return url;
+    } on FirebaseException catch (e) {
+      print("ERROR" + e.toString());
+      return "ERROR";
+    }
+  }
+
+  static UploadTask? uploadBytes(String destination, Uint8List data) {
+    try {
+      final ref = FirebaseStorage.instance.ref(destination);
+
+      return ref.putData(data);
+    } on FirebaseException catch (e) {
+      print("ERROR" + e.toString());
+      return null;
+    }
   }
 }

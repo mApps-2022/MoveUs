@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
 import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
+import 'package:front_end/src/Logic/utils/auth_utils.dart';
 import 'package:front_end/src/View/pages/register/register_logic.dart';
 
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
@@ -63,7 +65,7 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
     );
   }
 
-  uploadPhoto(bool isCamera) async {
+  Future uploadPhoto(bool isCamera) async {
     try {
       final ImagePicker _picker = ImagePicker();
       final image = await _picker.pickImage(source: isCamera ? ImageSource.camera : ImageSource.gallery);
@@ -71,6 +73,16 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
       final imageTemporary = File(image.path);
       setState(() {
         registerBloc.changeImage(imageTemporary);
+        Future<String> upload = Auth.uploadProfilePicture(context, imageTemporary);
+        upload.then((value) async {
+          print("URL = $value");
+          try {
+            await FirebaseAuth.instance.currentUser!.updatePhotoURL(value);
+          } on FirebaseException catch (e) {
+            print("ERROR: " + e.toString());
+          }
+        });
+        print("NOMBRE\n" + FirebaseAuth.instance.currentUser!.displayName!);
       });
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');

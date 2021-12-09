@@ -1,10 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front_end/generated/l10n.dart';
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
+import 'package:front_end/src/Logic/models/user.dart';
 import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
+import 'package:front_end/src/Logic/utils/auth_utils.dart';
 import 'package:front_end/src/View/pages/register/register_logic.dart';
 
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
@@ -71,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
               function: () => {
                 if (registerBloc.password == registerBloc.confirmPassword)
                   {
-                    //Auth.signUp(context, email: registerBloc.email!, password: registerBloc.password!),
+                    Auth.signUp(context, email: registerBloc.email!, displayName: registerBloc.name, password: registerBloc.password!),
                     Navigator.pushReplacementNamed(context, 'register/foto'),
                   }
                 else
