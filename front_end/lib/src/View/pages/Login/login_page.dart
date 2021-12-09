@@ -9,7 +9,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:front_end/generated/l10n.dart';
 
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
-import 'package:front_end/src/Logic/provider/ProvidetBlocs.dart';
+import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
 
 import 'package:front_end/src/Logic/utils/auth_utils.dart';
 import 'package:front_end/src/View/pages/Login/lower_buttons.dart';

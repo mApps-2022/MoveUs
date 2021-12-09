@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
 

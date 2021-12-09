@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:front_end/src/Logic/validators/registerValidator.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -11,17 +12,20 @@ class RegisterBloc with RegisterValidator {
   final _plateControler = BehaviorSubject<String>();
   final _colorControler = BehaviorSubject<String>();
   final _modelControler = BehaviorSubject<String>();
+  final _imageControler = BehaviorSubject<File>();
 
   Stream<bool> get isDriverStream => _isDriverControler.stream;
-  Stream<String> get nameStream => _nameControler.stream;
+  Stream<String> get nameStream => _nameControler.stream.transform(validateEmpty);
   Stream<String> get emailStream => _emailControler.stream.transform(validateEmail);
-  Stream<String> get phoneNumberStream => _phoneNumberControler.stream;
-  Stream<String> get passwordStream => _passwordControler.stream;
-  Stream<String> get confirmPasswordStream => _confirmPasswordControler.stream;
-  Stream<String> get plateStream => _plateControler.stream;
-  Stream<String> get colorStream => _colorControler.stream;
-  Stream<String> get modelStream => _modelControler.stream;
+  Stream<String> get phoneNumberStream => _phoneNumberControler.stream.transform(validateEmpty);
+  Stream<String> get passwordStream => _passwordControler.stream.transform(validatePassword);
+  Stream<String> get confirmPasswordStream => _confirmPasswordControler.stream.transform(validatePassword);
+  Stream<String> get plateStream => _plateControler.stream.transform(validateEmpty);
+  Stream<String> get colorStream => _colorControler.stream.transform(validateEmpty);
+  Stream<String> get modelStream => _modelControler.stream.transform(validateEmpty);
+  Stream<File> get imageStream => _imageControler.stream;
   Stream<bool> get validateBasicForm => Rx.combineLatest5(nameStream, emailStream, phoneNumberStream, passwordStream, confirmPasswordStream, (a, b, c, d, e) => true);
+  Stream<bool> get validateCompleteForm => Rx.combineLatest8(nameStream, emailStream, phoneNumberStream, passwordStream, confirmPasswordStream, plateStream, colorStream, modelStream, (a, b, c, d, e, f, g, h) => true);
 
   Function(bool) get changeIsDriver => _isDriverControler.sink.add;
   Function(String) get changeName => _nameControler.sink.add;
@@ -32,6 +36,7 @@ class RegisterBloc with RegisterValidator {
   Function(String) get changePlate => _plateControler.sink.add;
   Function(String) get changeColor => _colorControler.sink.add;
   Function(String) get changeModel => _modelControler.sink.add;
+  Function(File) get changeImage => _imageControler.sink.add;
 
   bool? get isDriver => _isDriverControler.valueOrNull;
   String? get name => _nameControler.valueOrNull;
@@ -42,6 +47,7 @@ class RegisterBloc with RegisterValidator {
   String? get plate => _plateControler.valueOrNull;
   String? get color => _colorControler.valueOrNull;
   String? get model => _modelControler.valueOrNull;
+  File? get image => _imageControler.valueOrNull;
 
   dispose() {
     _isDriverControler.close();
@@ -53,5 +59,6 @@ class RegisterBloc with RegisterValidator {
     _plateControler.close();
     _colorControler.close();
     _modelControler.close();
+    _imageControler.close();
   }
 }
