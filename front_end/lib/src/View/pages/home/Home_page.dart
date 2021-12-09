@@ -31,6 +31,10 @@ class HomePageState extends State<HomePage> {
 
   Location location = new Location();
 
+  bool updateCamera = true;
+
+  Set<Marker> markers = Set();
+
 
   @override
   void initState() {
@@ -77,7 +81,10 @@ class HomePageState extends State<HomePage> {
         title: Text('Move us'),
       ),
       body: GoogleMap(
+        myLocationEnabled: true,
+        compassEnabled: false,
         mapType: MapType.normal,
+        markers: markers,
         initialCameraPosition: CameraPosition(
           target: LatLng(latitude,longitude),
           zoom: 14.4746,
@@ -87,11 +94,26 @@ class HomePageState extends State<HomePage> {
           _controller.complete(controller);
           location.onLocationChanged.listen((l) {
             locationbloc.changeCurrentloc(l);
-            controller.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(target: LatLng(locationbloc.currentloc!.latitude!.toDouble(), locationbloc.currentloc!.longitude!.toDouble()),zoom: 15),
-            ),
-          ); });
+            markers.clear();
+            Marker resultMarker = Marker(
+              markerId: MarkerId("me"),
+              infoWindow: InfoWindow(
+                  title: "me",
+                  snippet: "me"),
+              position: LatLng(locationbloc.currentloc!.latitude!.toDouble(),
+                  locationbloc.currentloc!.longitude!.toDouble()),
+            );
+// Add it to Set
+            markers.add(resultMarker);
+            if(updateCamera){
+              controller.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(target: LatLng(locationbloc.currentloc!.latitude!.toDouble(), locationbloc.currentloc!.longitude!.toDouble()),zoom: 15),
+              ),
+            );
+            updateCamera=false;
+            }
+          });
         },
       ),
 
