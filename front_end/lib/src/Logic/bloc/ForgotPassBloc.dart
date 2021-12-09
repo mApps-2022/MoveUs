@@ -5,7 +5,8 @@ class ForgotPassBloc with ForgotPassValidator {
   final _emailControler = BehaviorSubject<String>();
 
   Stream<String> get emailStream => _emailControler.stream.transform(validateEmail);
-  //Rx.combineLatest(emailStream, emailStream => true);
+
+  Stream<bool> get validateBasicForm => Rx.combineLatest2(emailStream, emailStream, (a, b) => true);
 
   Function(String) get changeEmail => _emailControler.sink.add;
 

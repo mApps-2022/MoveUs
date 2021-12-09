@@ -61,13 +61,38 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
               SizedBox(height: 20),
               StreamBuilder<Object>(
                   stream: null,
-                  builder: (context, snapshot) {
-                    return form(forgotPassBloc);
+                  builder: (context, AsyncSnapshot snapshot) {
+                    Column(
+                      children: [
+                        _paddingField(TextField(
+                          decoration: InputDecoration(
+                              labelText: snapshot.hasError && snapshot.error != 'Empty' ? snapshot.error.toString() : S.of(context).login_email_field_label,
+                              labelStyle: snapshot.hasError && snapshot.error != 'Empty' ? TextStyle(fontSize: 18, color: Colors.red) : TextStyle(fontSize: 14, color: Colors.black),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(
+                                  width: 0,
+                                  style: BorderStyle.none,
+                                ),
+                              ),
+                              contentPadding: EdgeInsets.all(16),
+                              filled: true,
+                              prefixIcon: Icon(
+                                Icons.email,
+                                color: Colors.grey,
+                              )),
+                          onChanged: (value) => {
+                            forgotPassBloc.changeEmail(value),
+                          },
+                          keyboardType: TextInputType.emailAddress,
+                        )),
+                      ],
+                    );
                   }),
               _loginTextButton(),
               ButtomWidget(
-                //stream: forgotPassBloc.validateBasicForm,
-                stream: null,
+                stream: forgotPassBloc.validateBasicForm,
+                //stream: null,
                 function: () => {
                   //Auth.signUp(context, email: registerBloc.email!, password: forgotPassBloc.password!),
                   //Navigator.pushReplacementNamed(context, 'register/foto'),
@@ -164,10 +189,31 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
     );
   }
 
-  Column form(ForgotPassBloc forgotPassBloc) {
+  Column form(ForgotPassBloc forgotPassBloc, AsyncSnapshot snapshot) {
     return Column(
       children: [
-        _paddingField(_emailField(forgotPassBloc)),
+        _paddingField(TextField(
+          decoration: InputDecoration(
+              labelText: snapshot.hasError && snapshot.error != 'Empty' ? snapshot.error.toString() : S.of(context).login_email_field_label,
+              labelStyle: snapshot.hasError && snapshot.error != 'Empty' ? TextStyle(fontSize: 18, color: Colors.red) : TextStyle(fontSize: 14, color: Colors.black),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(
+                  width: 0,
+                  style: BorderStyle.none,
+                ),
+              ),
+              contentPadding: EdgeInsets.all(16),
+              filled: true,
+              prefixIcon: Icon(
+                Icons.email,
+                color: Colors.grey,
+              )),
+          onChanged: (value) => {
+            forgotPassBloc.changeEmail(value),
+          },
+          keyboardType: TextInputType.emailAddress,
+        )),
       ],
     );
   }
@@ -176,28 +222,21 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
     return Padding(padding: const EdgeInsets.only(top: 20, left: 20, right: 20), child: field);
   }
 
-  InputDecoration _decorationField(String labelTextField, Icon iconField) {
-    return InputDecoration(
-      labelText: labelTextField,
-      labelStyle: TextStyle(fontSize: 14, color: Colors.black),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide(
-          width: 0,
-          style: BorderStyle.none,
-        ),
-      ),
-      contentPadding: EdgeInsets.all(16),
-      filled: true,
-      prefixIcon: iconField,
-    );
-  }
-
-  Widget _emailField(ForgotPassBloc forgotPassBloc) {
+  Widget _emailField(ForgotPassBloc forgotPassBloc, AsyncSnapshot snapshot) {
     return TextField(
-      decoration: _decorationField(
-          S.of(context).login_email_field_label,
-          Icon(
+      decoration: InputDecoration(
+          labelText: snapshot.hasError && snapshot.error != 'Empty' ? snapshot.error.toString() : S.of(context).login_email_field_label,
+          labelStyle: snapshot.hasError && snapshot.error != 'Empty' ? TextStyle(fontSize: 18, color: Colors.red) : TextStyle(fontSize: 14, color: Colors.black),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(
+              width: 0,
+              style: BorderStyle.none,
+            ),
+          ),
+          contentPadding: EdgeInsets.all(16),
+          filled: true,
+          prefixIcon: Icon(
             Icons.email,
             color: Colors.grey,
           )),
