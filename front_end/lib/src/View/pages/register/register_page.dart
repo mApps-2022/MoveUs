@@ -74,7 +74,6 @@ class _RegisterPageState extends State<RegisterPage> {
               function: () => {
                 if (registerBloc.password == registerBloc.confirmPassword)
                   {
-                    Auth.signUp(context, email: registerBloc.email!, displayName: registerBloc.name, password: registerBloc.password!),
                     Navigator.pushReplacementNamed(context, 'register/foto'),
                   }
                 else
