@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:front_end/generated/l10n.dart';
 import 'package:path/path.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -92,5 +93,22 @@ class Auth {
       print("ERROR" + e.toString());
       return null;
     }
+  }
+
+  static void setCarInformation({required String uid, required String placa, required String color, required int modelo}) {
+    CollectionReference cars = FirebaseFirestore.instance.collection('Cars');
+
+    cars.doc(uid).set({
+      'placa': placa,
+      'color': color,
+      'modelo': modelo,
+    }).then((value) => print("Valor de retorno de la base de datos: $value"))
+      ..catchError((e) => print("Error subiendo la información del vehículo: $e"));
+  }
+
+  static void getCarInformation(String uid) {
+    CollectionReference cars = FirebaseFirestore.instance.collection('Cars');
+    Future<DocumentSnapshot<Object?>> carInfo = cars.doc(uid).get();
+    carInfo.then((value) => print("GET INFORMATION: $value"));
   }
 }
