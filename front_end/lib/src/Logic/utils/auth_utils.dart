@@ -95,14 +95,14 @@ class Auth {
     }
   }
 
-  static void setCarInformation({required String uid, required String placa, required String color, required int modelo}) {
+  static void setCarInformation({required String uid, required String placa, required String color, required String modelo}) {
     CollectionReference cars = FirebaseFirestore.instance.collection('Cars');
 
     cars.doc(uid).set({
       'placa': placa,
       'color': color,
       'modelo': modelo,
-    }).then((value) => print("Valor de retorno de la base de datos: $value"))
+    }).then((value) => print("Valor de retorno de la base de datos: retorno BD"))
       ..catchError((e) => print("Error subiendo la información del vehículo: $e"));
   }
 
@@ -110,5 +110,9 @@ class Auth {
     CollectionReference cars = FirebaseFirestore.instance.collection('Cars');
     Future<DocumentSnapshot<Object?>> carInfo = cars.doc(uid).get();
     carInfo.then((value) => print("GET INFORMATION: $value"));
+  }
+
+  static User getUser() {
+    return FirebaseAuth.instance.currentUser!;
   }
 }

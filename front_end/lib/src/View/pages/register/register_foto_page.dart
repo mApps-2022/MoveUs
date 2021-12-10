@@ -98,8 +98,14 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
             title: Text('Eliga la foto'),
             actions: <Widget>[
               TextButton(
-                onPressed: () {
-                  uploadPhoto(false);
+                onPressed: () async {
+                  await Auth.signUp(context, email: registerBloc.email!, displayName: registerBloc.name, password: registerBloc.password!).then(
+                    (value) {
+                      uploadPhoto(false);
+                      User userDB = Auth.getUser();
+                      if (registerBloc.isDriver!) Auth.setCarInformation(color: registerBloc.color!, modelo: registerBloc.model!, placa: registerBloc.color!, uid: userDB.uid);
+                    },
+                  );
                   Navigator.pop(context);
                 },
                 child: Text('elegir de galeria'),
