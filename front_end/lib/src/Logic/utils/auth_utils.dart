@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-
-import 'package:front_end/generated/l10n.dart';
 import 'package:path/path.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -35,11 +33,14 @@ class Auth {
 
   static Future<User?> signUp(BuildContext context, {required email, required displayName, required password}) async {
     try {
-      FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value) {
+      late User currentUser;
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value) {
         print("Retorno: $value");
-        User? currentUser = FirebaseAuth.instance.currentUser;
-        currentUser?.updateDisplayName(displayName);
+        currentUser = FirebaseAuth.instance.currentUser!;
+        currentUser.updateDisplayName(displayName);
+        print('user: ${currentUser.email} ');
       });
+      return currentUser;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -114,5 +115,9 @@ class Auth {
 
   static User getUser() {
     return FirebaseAuth.instance.currentUser!;
+  }
+
+  static void signOut() {
+    FirebaseAuth.instance.signOut();
   }
 }

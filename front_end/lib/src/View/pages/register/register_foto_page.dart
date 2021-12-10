@@ -26,6 +26,7 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
   late RegisterBloc registerBloc;
   File auxFile = new File('');
   RegisterLogic registerLogic = RegisterLogic();
+  late User userDB;
   @override
   Widget build(BuildContext context) {
     registerBloc = context.read<ProviderBlocs>().register;
@@ -73,20 +74,22 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
       final imageTemporary = File(image.path);
       setState(() {
         registerBloc.changeImage(imageTemporary);
-        Future<String> upload = Auth.uploadProfilePicture(context, imageTemporary);
-        upload.then((value) async {
-          print("URL = $value");
-          try {
-            await FirebaseAuth.instance.currentUser!.updatePhotoURL(value);
-          } on FirebaseException catch (e) {
-            print("ERROR: " + e.toString());
-          }
-        });
-        print("NOMBRE\n" + FirebaseAuth.instance.currentUser!.displayName!);
       });
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
+  }
+
+  Future uploadPhotoToDataBase() async {
+    Future<String> upload = Auth.uploadProfilePicture(context, registerBloc.image!);
+    upload.then((value) async {
+      print("URL = $value");
+      try {
+        await FirebaseAuth.instance.currentUser!.updatePhotoURL(value);
+      } on FirebaseException catch (e) {
+        print("ERROR: " + e.toString());
+      }
+    });
   }
 
   dialogPhoto() {
@@ -98,14 +101,8 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
             title: Text('Eliga la foto'),
             actions: <Widget>[
               TextButton(
-                onPressed: () async {
-                  await Auth.signUp(context, email: registerBloc.email!, displayName: registerBloc.name, password: registerBloc.password!).then(
-                    (value) {
-                      uploadPhoto(false);
-                      User userDB = Auth.getUser();
-                      if (registerBloc.isDriver!) Auth.setCarInformation(color: registerBloc.color!, modelo: registerBloc.model!, placa: registerBloc.color!, uid: userDB.uid);
-                    },
-                  );
+                onPressed: () {
+                  uploadPhoto(false);
                   Navigator.pop(context);
                 },
                 child: Text('elegir de galeria'),
@@ -131,13 +128,19 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
             title: Text('Eliga la foto'),
             actions: <Widget>[
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  registerLogic.cleanRegisterBolc(registerBloc);
-                  registerBloc.changeImage(auxFile);
-                  Navigator.pushReplacementNamed(context, '/');
-                },
                 child: Text('elegir esta foto'),
+                onPressed: () async {
+                  await Auth.signUp(context, email: registerBloc.email!, displayName: registerBloc.name, password: registerBloc.password!).then(
+                    (value) => {
+                      uploadPhotoToDataBase(),
+                      if (registerBloc.isDriver!) Auth.setCarInformation(color: registerBloc.color!, modelo: registerBloc.model!, placa: registerBloc.plate!, uid: value!.uid),
+                    },
+                  );
+                  if (true) {
+                    Navigator.pop(context);
+                    dialogCreatedAccount();
+                  }
+                },
               ),
               TextButton(
                 onPressed: () {
@@ -147,6 +150,28 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
                   });
                 },
                 child: Text('elegir otra foto'),
+              ),
+            ],
+          );
+        });
+  }
+
+  dialogCreatedAccount() {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('Cuenta creada correctamente'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Auth.signOut();
+                  registerLogic.cleanRegisterBolc(registerBloc);
+                  registerBloc.changeImage(auxFile);
+                  Navigator.pushReplacementNamed(context, '/');
+                },
+                child: Text('Aceptar'),
               ),
             ],
           );
