@@ -1,9 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:front_end/src/Logic/bloc/LoginBloc.dart';
+import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
+import 'package:front_end/src/Logic/utils/auth_utils.dart';
+import 'package:provider/src/provider.dart';
 
 class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    LoginBloc loginBloc = context.read<ProviderBlocs>().login;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -40,10 +45,13 @@ class Sidebar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () {
-              Navigator.of(context).pop();
-              //Navigator.of(context).push();
-              //Navigator.pushReplacementNamed(context, 'register');
+            onTap: () => {
+              Auth.signOut(),
+              Navigator.pushReplacementNamed(context, '/'),
+              loginBloc.changeEmail(''),
+              loginBloc.changePassword(''),
+              loginBloc.changePhoneNumber(''),
+              loginBloc.changeUserState(''),
             },
           ),
         ],

@@ -1,32 +1,39 @@
 import 'package:flutter/material.dart';
 
-class ButtomWidget extends StatelessWidget {
-  const ButtomWidget({Key? key, this.stream, required this.function, required this.text, required this.enebleColor, required this.disableColor}) : super(key: key);
+class ButtomWidget extends StatefulWidget {
+  const ButtomWidget({Key? key, this.stream, required this.function, required this.text, required this.enebleColor, required this.disableColor, this.heroTag}) : super(key: key);
 
   final Stream? stream;
   final function;
   final String text;
   final Color enebleColor;
   final Color disableColor;
+  final heroTag;
 
+  @override
+  State<ButtomWidget> createState() => _ButtomWidgetState();
+}
+
+class _ButtomWidgetState extends State<ButtomWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: stream,
+      stream: widget.stream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Container(
           child: FloatingActionButton.extended(
-            backgroundColor: stream == null
-                ? enebleColor
+            heroTag: widget.heroTag,
+            backgroundColor: widget.stream == null
+                ? widget.enebleColor
                 : snapshot.hasData
-                    ? enebleColor
-                    : disableColor,
-            onPressed: stream == null
-                ? function
+                    ? widget.enebleColor
+                    : widget.disableColor,
+            onPressed: widget.stream == null
+                ? widget.function
                 : snapshot.hasData
-                    ? function
+                    ? widget.function
                     : null,
-            label: Text(text),
+            label: Text(widget.text),
           ),
         );
       },

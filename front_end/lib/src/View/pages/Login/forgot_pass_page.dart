@@ -62,7 +62,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
               StreamBuilder<Object>(
                   stream: null,
                   builder: (context, AsyncSnapshot snapshot) {
-                    Column(
+                    return Column(
                       children: [
                         _paddingField(TextField(
                           decoration: InputDecoration(

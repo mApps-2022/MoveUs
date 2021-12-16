@@ -1,6 +1,7 @@
 {
     "continue_label": "Continue",
     "hello": "hello",
+    "invalid_password": "Invalid password",
     "login_button_create_account": "Create account",
     "login_button_login": "Login",
     "login_button_login_google": "Login with google",
