@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:front_end/src/Logic/models/card.dart';
 
 class UserProfilePage extends StatefulWidget {
   UserProfilePage({Key? key}) : super(key: key);
@@ -74,7 +75,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       children: [
         FutureBuilder(
             future: getUserInformation(FirebaseAuth.instance.currentUser!.uid),
-            builder: (BuildContext context, AsyncSnapshot<List<Object>> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<List<CreditCard>> snapshot) {
               if (snapshot.hasData) {
                 return getCards(snapshot);
               }
@@ -84,8 +85,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  ListView getCards(AsyncSnapshot<List<Object>> snapshot) {
-    List<Card> cards = snapshot.data!;
+  ListView getCards(AsyncSnapshot<List<CreditCard>> snapshot) {
+    print(snapshot.data);
+    List<CreditCard> cards = snapshot.data!;
     return ListView.builder(
         shrinkWrap: true,
         itemCount: cards.length,
@@ -99,7 +101,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   leading: Padding(
                       padding: EdgeInsets.only(left: 15.0),
                       child: Image(
-                        image: (cards[index].)("https://pbs.twimg.com/profile_images/1410611681303023621/HDtqy0Oq_400x400.jpg"),
+                        image: (cards[index].Brand == "MasterCard")
+                            ? NetworkImage("https://pbs.twimg.com/profile_images/1410611681303023621/HDtqy0Oq_400x400.jpg")
+                            : NetworkImage("https://belybula.com/wp-content/uploads/2019/04/Visa-Logo-Free-Download-PNG.png"),
                       )),
                   contentPadding: EdgeInsets.only(top: 10.0),
                   title: Text('Soy el titulo de esta tarjeta'),
@@ -152,16 +156,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Future<List<Object>> getUserInformation(String uid) async {
+  Future<List<CreditCard>> getUserInformation(String uid) async {
     User? user = FirebaseAuth.instance.currentUser;
-    List<Object> cards = [];
+    List<CreditCard> cards = [];
     CollectionReference userCards = FirebaseFirestore.instance.collection("PaymentInfo").doc(user!.uid).collection("Cards");
     await userCards.get().then((value) {
       for (QueryDocumentSnapshot<Object?> card in value.docs) {
-        print("TARJEEEEETA: " + card.data().toString());
-        cards.add(card.data()!);
+        print(CreditCard.fromJson(card.data() as Map));
+        cards.add(CreditCard.fromJson(card.data() as Map));
       }
-      return cards;
     });
     return cards;
   }
