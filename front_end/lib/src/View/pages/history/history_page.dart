@@ -20,6 +20,10 @@ class _HistoryPageState extends State<HistoryPage> {
     if (index == 0) {
       Navigator.pushReplacementNamed(context, 'home');
     }
+    if (index == 1) {
+      Navigator.pushReplacementNamed(context, 'createRoute');
+    }
+
     setState(() {
       _indexseleccionado = index;
     });
