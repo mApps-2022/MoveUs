@@ -121,7 +121,7 @@ class HomePageState extends State<HomePage> {
         BottomNavigationBarItem(icon: Icon(Icons.home),
         label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
-        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Carrro'),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Carro'),
         BottomNavigationBarItem(icon: Icon(Icons.message_rounded), label: 'Mensajes')
       ],
         currentIndex: _indexseleccionado,

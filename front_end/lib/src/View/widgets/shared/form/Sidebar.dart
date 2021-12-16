@@ -36,7 +36,7 @@ class Sidebar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.border_color),
             title: Text('Feedback'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {Navigator.pushReplacementNamed(context, 'createRoute')},
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
