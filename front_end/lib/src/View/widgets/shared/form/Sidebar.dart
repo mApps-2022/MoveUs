@@ -30,7 +30,7 @@ class Sidebar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.verified_user),
             title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {Navigator.pushNamed(context, "Profile")},
           ),
           ListTile(
             leading: Icon(Icons.settings),
@@ -40,7 +40,7 @@ class Sidebar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.border_color),
             title: Text('Feedback'),
-            onTap: () => {Navigator.pushReplacementNamed(context, 'createRoute')},
+            onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),

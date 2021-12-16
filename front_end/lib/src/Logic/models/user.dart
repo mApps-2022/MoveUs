@@ -1,35 +1,26 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class User with ChangeNotifier {
-  String id;
+class UserInfo {
+  String uid;
   String displayName;
   String photoURL;
   String email;
+  List<CreditCard>? creditCards;
 
-  User({
-    required this.id,
+  UserInfo.register({
+    required this.uid,
     required this.displayName,
     required this.photoURL,
     required this.email,
   });
 
-  factory User.fromFirestore(DocumentSnapshot userDoc) {
-    Map userData = userDoc.data as Map;
-    return User(
-      id: userDoc.id,
-      displayName: userData['displayName'],
-      photoURL: userData['photoURL'],
-      email: userData['email'],
-    );
-  }
+  UserInfo.buildInfo({required this.uid, required this.displayName, required this.photoURL, required this.email, required this.creditCards});
+}
 
-  void setFromFireStore(DocumentSnapshot userDoc) {
-    Map userData = userDoc.data as Map;
-    this.id = userDoc.id;
-    this.displayName = userData['displayName'];
-    this.photoURL = userData['photoURL'];
-    this.email = userData['email'];
-    notifyListeners();
-  }
+class CreditCard {
+  String number;
+  String expDate;
+  String ccv;
+
+  CreditCard({required this.number, required this.expDate, required this.ccv});
 }
