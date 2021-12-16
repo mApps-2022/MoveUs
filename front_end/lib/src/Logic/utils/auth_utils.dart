@@ -120,4 +120,34 @@ class Auth {
   static void signOut() {
     FirebaseAuth.instance.signOut();
   }
+
+  static Future<List<Object?>> getTripHistory(String uid) async {
+    //String uid
+    List<Object?> ret = [];
+    CollectionReference trips = FirebaseFirestore.instance.collection('TripHistory').doc(uid).collection('Trips');
+    Future<QuerySnapshot<Object?>> tripInfo = trips.get();
+    await tripInfo.then((value) {
+      //print("GET INFORMATION: ${value.docs.first.data()}"));
+      for (QueryDocumentSnapshot<Object?> trip in value.docs) {
+        ret.add(trip.data());
+      }
+    });
+    return ret;
+  }
+
+  static void setTripHistory({
+    required String uid,
+    required String driverId,
+    required Timestamp date,
+    required String car,
+  }) {
+    CollectionReference tripHistory = FirebaseFirestore.instance.collection('TripHistory');
+
+    tripHistory.doc(uid).collection('Trips').add({
+      'driverId': driverId,
+      'date': date,
+      'car': car,
+    }).then((value) => print("Valor de retorno de la base de datos: retorno BD"))
+      ..catchError((e) => print("Error subiendo la información del vehículo: $e"));
+  }
 }
