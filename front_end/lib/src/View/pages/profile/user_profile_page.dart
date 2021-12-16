@@ -85,7 +85,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   ListView getCards(AsyncSnapshot<List<Object>> snapshot) {
-    List<Object> cards = snapshot.data!;
+    List<Card> cards = snapshot.data!;
     return ListView.builder(
         shrinkWrap: true,
         itemCount: cards.length,
@@ -99,7 +99,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   leading: Padding(
                       padding: EdgeInsets.only(left: 15.0),
                       child: Image(
-                        image: NetworkImage("https://pbs.twimg.com/profile_images/1410611681303023621/HDtqy0Oq_400x400.jpg"),
+                        image: (cards[index].)("https://pbs.twimg.com/profile_images/1410611681303023621/HDtqy0Oq_400x400.jpg"),
                       )),
                   contentPadding: EdgeInsets.only(top: 10.0),
                   title: Text('Soy el titulo de esta tarjeta'),
