@@ -1,9 +1,19 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
 import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
+import 'package:front_end/src/Logic/utils/auth_utils.dart';
+import 'package:front_end/src/View/pages/register/register_logic.dart';
 
 import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/src/provider.dart';
 
 class RegisteFotoPage extends StatefulWidget {
@@ -14,21 +24,41 @@ class RegisteFotoPage extends StatefulWidget {
 }
 
 class _RegisteFotoPageState extends State<RegisteFotoPage> {
+  late RegisterBloc registerBloc;
+  File auxFile = new File('');
+  RegisterLogic registerLogic = RegisterLogic();
+  late User userDB;
   @override
   Widget build(BuildContext context) {
-    RegisterBloc registerBloc = context.read<ProviderBlocs>().register;
+    registerBloc = context.read<ProviderBlocs>().register;
+    if (registerBloc.image == null) {
+      registerBloc.changeImage(auxFile);
+    }
     return WillPopScope(
       onWillPop: () {
         return Navigator.maybePop(context);
       },
       child: Scaffold(
-        body: body(context, registerBloc),
+        appBar: AppBar(
+          leading: GestureDetector(
+            onTap: () {
+              registerLogic.cleanRegisterBolc(registerBloc);
+              Navigator.pushReplacementNamed(context, 'register');
+            },
+            child: Icon(
+              Icons.arrow_back_ios_new, // add custom icons also
+            ),
+          ),
+          backgroundColor: Colors.white54,
+          elevation: 2,
+        ),
+        body: body(context),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(10.0),
           child: ButtomWidget(
             stream: null,
-            function: () => print('object'),
-            text: 'añadir foto',
+            function: () => registerBloc.image!.path == '' ? dialogPhoto() : dialogConfirmPhoto(),
+            text: registerBloc.image!.path == '' ? 'añadir foto' : 'quiere selecionar esta foto',
             enebleColor: Color.fromRGBO(83, 232, 139, 1),
             disableColor: Colors.grey[400]!,
           ),
@@ -37,14 +67,145 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
     );
   }
 
-  body(BuildContext context, registerBloc) {
+  Future uploadPhoto(bool isCamera) async {
+    try {
+      final ImagePicker _picker = ImagePicker();
+      final image = await _picker.pickImage(source: isCamera ? ImageSource.camera : ImageSource.gallery);
+      if (image == null) return;
+      final imageTemporary = File(image.path);
+      setState(() {
+        registerBloc.changeImage(imageTemporary);
+      });
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  Future uploadPhotoToDataBase(User user) async {
+    Future<String> upload = Auth.uploadProfilePicture(context, registerBloc.image!);
+    await upload.then((value) async {
+      print("URL = $value");
+      try {
+        await user.updatePhotoURL(value);
+      } on FirebaseException catch (e) {
+        print("ERROR: " + e.toString());
+      }
+    });
+  }
+
+  dialogPhoto() {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('Eliga la foto'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  uploadPhoto(false);
+                  Navigator.pop(context);
+                },
+                child: Text('elegir de galeria'),
+              ),
+              TextButton(
+                onPressed: () {
+                  uploadPhoto(true);
+                  Navigator.pop(context);
+                },
+                child: Text('tomar con camara'),
+              ),
+            ],
+          );
+        });
+  }
+
+  dialogConfirmPhoto() {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('Eliga la foto'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('elegir esta foto'),
+                onPressed: () async {
+                  EasyLoading.init();
+                  await Auth.signUp(context, email: registerBloc.email!, displayName: registerBloc.name, password: registerBloc.password!).then(
+                    (user) => {
+                      if (user != null)
+                        {
+                          uploadPhotoToDataBase(user),
+                          if (registerBloc.isDriver!) Auth.setCarInformation(color: registerBloc.color!, modelo: registerBloc.model!, placa: registerBloc.plate!, uid: user.uid),
+                          EasyLoading.dismiss(),
+                        }
+                    },
+                  );
+                  if (true) {
+                    Navigator.pop(context);
+                    dialogCreatedAccount();
+                  }
+                },
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    registerBloc.changeImage(auxFile);
+                  });
+                },
+                child: Text('elegir otra foto'),
+              ),
+            ],
+          );
+        });
+  }
+
+  dialogCreatedAccount() {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('Cuenta creada correctamente'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Auth.signOut();
+                  registerLogic.cleanRegisterBolc(registerBloc);
+                  registerBloc.changeImage(auxFile);
+                  Navigator.pushReplacementNamed(context, '/');
+                },
+                child: Text('Aceptar'),
+              ),
+            ],
+          );
+        });
+  }
+
+  body(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
+          child: Text('Eliga su foto de perfil'),
+        ),
+        SizedBox(
+          height: size.height / 8,
+        ),
+        Container(
           child: Center(
-            child: Image(
-              image: AssetImage('assets/img/Photo.png'),
-            ),
+            child: registerBloc.image!.path == ''
+                ? Image(
+                    image: AssetImage('assets/img/Photo.png'),
+                  )
+                : Image.file(
+                    registerBloc.image!,
+                    width: size.width / 2,
+                    height: size.height / 2,
+                  ),
           ),
         ),
       ],

@@ -24,6 +24,8 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "continue_label": MessageLookupByLibrary.simpleMessage("Continuar"),
         "hello": MessageLookupByLibrary.simpleMessage("hola"),
+        "invalid_password":
+            MessageLookupByLibrary.simpleMessage("Contraseña Invalida"),
         "login_button_create_account":
             MessageLookupByLibrary.simpleMessage("Crear cuenta"),
         "login_button_login":
