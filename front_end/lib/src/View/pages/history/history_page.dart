@@ -14,6 +14,16 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   final temp = ['viaje 1', 'viaje 2', 'viaje 3', 'viaje 4'];
   List<Object?> list = [];
+  int _indexseleccionado = 2;
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, 'home');
+    }
+    setState(() {
+      _indexseleccionado = index;
+    });
+  }
 
   @override
   void initState() {
@@ -47,6 +57,12 @@ class _HistoryPageState extends State<HistoryPage> {
           print(snapshot.data);
           return _historyList(snapshot.data);
         },
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          bottomNavigationBar(),
+        ],
       ),
     ]);
   }
@@ -114,12 +130,29 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
                 child: Image.asset('assets/img/Photo.png', fit: BoxFit.cover),
               ),
-
-              //FlutterLogo(size: 72.0), onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(context, 'travelHistoryDetail');
+              },
             ),
           ),
         );
       },
+    );
+  }
+
+  BottomNavigationBar bottomNavigationBar() {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Historial de viajes'),
+        //Navigator.pushReplacementNamed(context, 'tripHistory');
+        BottomNavigationBarItem(icon: Icon(Icons.message_rounded), label: 'Mensajes')
+      ],
+      currentIndex: _indexseleccionado,
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.grey,
+      onTap: _onItemTapped,
     );
   }
 }

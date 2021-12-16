@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'package:front_end/src/Logic/bloc/registerBloc.dart';
 import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
@@ -80,12 +81,12 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
     }
   }
 
-  Future uploadPhotoToDataBase() async {
+  Future uploadPhotoToDataBase(User user) async {
     Future<String> upload = Auth.uploadProfilePicture(context, registerBloc.image!);
-    upload.then((value) async {
+    await upload.then((value) async {
       print("URL = $value");
       try {
-        await FirebaseAuth.instance.currentUser!.updatePhotoURL(value);
+        await user.updatePhotoURL(value);
       } on FirebaseException catch (e) {
         print("ERROR: " + e.toString());
       }
@@ -130,10 +131,15 @@ class _RegisteFotoPageState extends State<RegisteFotoPage> {
               TextButton(
                 child: Text('elegir esta foto'),
                 onPressed: () async {
+                  EasyLoading.init();
                   await Auth.signUp(context, email: registerBloc.email!, displayName: registerBloc.name, password: registerBloc.password!).then(
-                    (value) => {
-                      uploadPhotoToDataBase(),
-                      if (registerBloc.isDriver!) Auth.setCarInformation(color: registerBloc.color!, modelo: registerBloc.model!, placa: registerBloc.plate!, uid: value!.uid),
+                    (user) => {
+                      if (user != null)
+                        {
+                          uploadPhotoToDataBase(user),
+                          if (registerBloc.isDriver!) Auth.setCarInformation(color: registerBloc.color!, modelo: registerBloc.model!, placa: registerBloc.plate!, uid: user.uid),
+                          EasyLoading.dismiss(),
+                        }
                     },
                   );
                   if (true) {
