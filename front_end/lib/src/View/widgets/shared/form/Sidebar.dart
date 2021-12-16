@@ -30,7 +30,7 @@ class Sidebar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.verified_user),
             title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {Navigator.pushNamed(context, "Profile")},
           ),
           ListTile(
             leading: Icon(Icons.settings),
