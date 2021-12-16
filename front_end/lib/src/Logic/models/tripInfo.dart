@@ -2,30 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Trip with ChangeNotifier {
-  String car;
-  String date;
-  String driverId;
+  final String car;
+  final Timestamp date;
+  final String driverId;
+  Trip({required this.car, required this.date, required this.driverId});
 
-  Trip({
-    required this.car,
-    required this.date,
-    required this.driverId,
-  });
+  Trip.fromJson(Map<dynamic, dynamic> json)
+      : car = json['car'],
+        date = json['date'],
+        driverId = json['driverId'];
 
-  factory Trip.fromFirestore(DocumentSnapshot tripDoc) {
-    Map tripData = tripDoc.data as Map;
-    return Trip(
-      car: tripData['car'],
-      date: tripData['date'],
-      driverId: tripData['driverId'],
-    );
-  }
-
-  void setFromFireStore(DocumentSnapshot userDoc) {
-    Map userData = userDoc.data as Map;
-    this.car = userData['displayName'];
-    this.date = userData['photoURL'];
-    this.driverId = userData['email'];
-    notifyListeners();
-  }
+  Map<dynamic, dynamic> toJson() => <dynamic, dynamic>{
+        'car': car,
+        'date': date,
+        'driverId': driverId,
+      };
 }

@@ -13,19 +13,17 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   final temp = ['viaje 1', 'viaje 2', 'viaje 3', 'viaje 4'];
-  List<Object?> tripHistoryList = [];
+  List<Object?> list = [];
 
   @override
   void initState() {
+    loadTripHistoryfunc();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      tripHistoryList = await Auth.getTripHistory('YXQqAv9QOTbtzhzSk3wz');
-    });
-
+    //WidgetsBinding.instance!.addPostFrameCallback((_) => func());
     return WillPopScope(
       onWillPop: () {
         return Navigator.maybePop(context);
@@ -39,13 +37,18 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Stack body(BuildContext context) {
-    return Stack(
-      children: [
-        _imageLogo(150),
-        _historyList(),
-      ],
-    );
+  Widget body(BuildContext context) {
+    return Stack(children: [
+      _imageLogo(150),
+      FutureBuilder(
+        future: loadTripHistoryfunc(),
+        initialData: [],
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          print(snapshot.data);
+          return _historyList(snapshot.data);
+        },
+      ),
+    ]);
   }
 
   Container _imageLogo(double imageHeight) {
@@ -60,15 +63,22 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  ListView _historyList() {
-    // = await Auth.signUp(context, email: registerBloc.email!, displayName: registerBloc.name, password: registerBloc.password!);
-    //Map decodedTripHistoryList = json.decode(tripHistoryList);
-    //List<Object?> tripHistoryList = await Auth.getTripHistory('YXQqAv9QOTbtzhzSk3wz');
-    //Trip listTrip = tripHistoryList.fromJson(data.snapshot.value as Map);
-    //Posiciones posicionesDb = Posiciones.fromJson(data.snapshot.value as Map);
+  Future<List<Trip>> loadTripHistoryfunc() async {
+    List tmpList = [];
+    List<Trip> listTrip = [];
+    tmpList = await Auth.getTripHistory('YXQqAv9QOTbtzhzSk3wz');
 
+    for (Object? i in tmpList) {
+      listTrip.add(Trip.fromJson(i as Map));
+    }
+    //print(listTrip);
+
+    return listTrip;
+  }
+
+  ListView _historyList(List<dynamic> data) {
     return ListView.builder(
-      itemCount: 10, //Tamaño de la lista
+      itemCount: data.length, //Tamaño de la lista
 
       itemBuilder: (BuildContext context, int index) {
         return Padding(
@@ -79,10 +89,21 @@ class _HistoryPageState extends State<HistoryPage> {
             shadowColor: Color.fromRGBO(83, 232, 139, 1),
             //color: Color.fromRGBO(83, 232, 139, 0.9),
             child: ListTile(
-              title: Text('data a: $index'),
+              title: Row(
+                children: [
+                  Text('Conductor: ' + data[index].driverId),
+                ],
+              ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text('Origen: ' + index.toString() + ' Destino: ' + index.toString()), Text('data')],
+                children: [
+                  Text('Origen: ' + index.toString() + ' Destino: ' + index.toString()),
+                  Text('Carro: ' + data[index].car),
+                  Text('Fecha:' + data[index].date.toDate().toString()),
+                  SizedBox(
+                    height: 10,
+                  ),
+                ],
               ),
               leading: ConstrainedBox(
                 constraints: BoxConstraints(
