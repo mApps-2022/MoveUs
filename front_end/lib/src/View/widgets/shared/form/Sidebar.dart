@@ -25,7 +25,7 @@ class Sidebar extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.input),
             title: Text('Welcome'),
-            onTap: () => {},
+            onTap: () => {Navigator.pushReplacementNamed(context, 'travelHistoryDetail')},
           ),
           ListTile(
             leading: Icon(Icons.verified_user),
