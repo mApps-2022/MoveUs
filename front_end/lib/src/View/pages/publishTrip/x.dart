@@ -8,24 +8,27 @@ import 'package:location/location.dart';
 import 'package:provider/src/provider.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
-
 class CreateRoute extends StatefulWidget {
   @override
   State<CreateRoute> createState() => CreateRouteState();
 }
 
-
-
 class CreateRouteState extends State<CreateRoute> {
-  int  _indexseleccionado=0;
-  PageController pageController= new PageController();
+  int _indexseleccionado = 1;
+  PageController pageController = new PageController();
   void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, 'home');
+    }
+    if (index == 2) {
+      Navigator.pushReplacementNamed(context, 'tripHistory');
+    }
     setState(() {
       _indexseleccionado = index;
     });
   }
-  Completer<GoogleMapController> _controller = Completer();
 
+  Completer<GoogleMapController> _controller = Completer();
 
   double latitude = 4.72;
   double longitude = -72.76;
@@ -33,13 +36,11 @@ class CreateRouteState extends State<CreateRoute> {
   double firstLatitude = 4.72;
   double firstLongitude = -72.76;
 
-  late double secondLatitude ;
+  late double secondLatitude;
   late double secondLongitude;
 
   bool second = false;
   bool firstTime = true;
-
-
 
   Location location = new Location();
 
@@ -57,19 +58,14 @@ class CreateRouteState extends State<CreateRoute> {
 // which generates every polyline between start and finish
   PolylinePoints polylinePoints = PolylinePoints();
 
-
   @override
   void initState() {
     getLocation();
   }
 
-
-  Future<void> getLocation() async{
-
-
+  Future<void> getLocation() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
-
 
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -88,20 +84,16 @@ class CreateRouteState extends State<CreateRoute> {
     }
 
     LocationData _currentPosition = await location.getLocation();
-    latitude =  _currentPosition.latitude!.toDouble();
-    longitude= _currentPosition.longitude!.toDouble();
-
+    latitude = _currentPosition.latitude!.toDouble();
+    longitude = _currentPosition.longitude!.toDouble();
   }
-
-
 
   setPolylines() async {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      apiKey, // Google Maps API Key
-      PointLatLng(firstLatitude, firstLongitude),
-      PointLatLng(secondLatitude, secondLongitude),
-      travelMode: TravelMode.driving
-    );
+        apiKey, // Google Maps API Key
+        PointLatLng(firstLatitude, firstLongitude),
+        PointLatLng(secondLatitude, secondLongitude),
+        travelMode: TravelMode.driving);
     if (result.status == 'OK') {
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(
@@ -119,15 +111,13 @@ class CreateRouteState extends State<CreateRoute> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    LocationBloc locationbloc=context.read<ProviderBlocs>().location;
+    LocationBloc locationbloc = context.read<ProviderBlocs>().location;
     return new Scaffold(
       drawer: Sidebar(),
       appBar: AppBar(
-        title: Text('Move us'),
+        title: Text('Crear Ruta'),
       ),
       body: GoogleMap(
         myLocationEnabled: true,
@@ -136,35 +126,31 @@ class CreateRouteState extends State<CreateRoute> {
         markers: markers,
         polylines: polylines,
         initialCameraPosition: CameraPosition(
-          target: LatLng(latitude,longitude),
+          target: LatLng(latitude, longitude),
           zoom: 14.4746,
         ),
         onMapCreated: (GoogleMapController controller) {
-
           _controller.complete(controller);
           location.onLocationChanged.listen((l) {
             locationbloc.changeCurrentloc(l);
-            if(firstTime) {
+            if (firstTime) {
               Marker resultMarker = Marker(
                 markerId: MarkerId("me"),
-                infoWindow: InfoWindow(
-                    title: "me",
-                    snippet: "me"),
-                position: LatLng(locationbloc.currentloc!.latitude!.toDouble(),
-                    locationbloc.currentloc!.longitude!.toDouble()),
+                infoWindow: InfoWindow(title: "me", snippet: "me"),
+                position: LatLng(locationbloc.currentloc!.latitude!.toDouble(), locationbloc.currentloc!.longitude!.toDouble()),
               );
               markers.add(resultMarker);
               firstTime = false;
             }
 // Add it to Set
 
-            if(updateCamera){
+            if (updateCamera) {
               controller.animateCamera(
                 CameraUpdate.newCameraPosition(
-                  CameraPosition(target: LatLng(locationbloc.currentloc!.latitude!.toDouble(), locationbloc.currentloc!.longitude!.toDouble()),zoom: 15),
+                  CameraPosition(target: LatLng(locationbloc.currentloc!.latitude!.toDouble(), locationbloc.currentloc!.longitude!.toDouble()), zoom: 15),
                 ),
               );
-              updateCamera=false;
+              updateCamera = false;
             }
           });
         },
@@ -184,25 +170,19 @@ class CreateRouteState extends State<CreateRoute> {
 
             if (second) {
               setPolylines();
-            }
-            else{
-              second=true;
+            } else {
+              second = true;
             }
           });
-
-
-
-
         },
       ),
-
-      bottomNavigationBar: BottomNavigationBar(items: const<BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.home),
-            label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
-        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Carrro'),
-        BottomNavigationBarItem(icon: Icon(Icons.message_rounded), label: 'Mensajes')
-      ],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Carrro'),
+          BottomNavigationBarItem(icon: Icon(Icons.message_rounded), label: 'Mensajes')
+        ],
         currentIndex: _indexseleccionado,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
@@ -210,5 +190,4 @@ class CreateRouteState extends State<CreateRoute> {
       ),
     );
   }
-
 }

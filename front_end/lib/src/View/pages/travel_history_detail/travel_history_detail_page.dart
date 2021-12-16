@@ -58,7 +58,7 @@ class _TravelHistoryDetailState extends State<TravelHistoryDetail> {
         appBar: AppBar(
           leading: GestureDetector(
             onTap: () {
-              Navigator.pushReplacementNamed(context, 'home');
+              Navigator.pushReplacementNamed(context, 'tripHistory');
             },
             child: Icon(
               Icons.arrow_back_ios_new, // add custom icons also

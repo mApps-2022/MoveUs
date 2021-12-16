@@ -8,18 +8,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/src/provider.dart';
 
-
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => HomePageState();
 }
 
-
-
 class HomePageState extends State<HomePage> {
   int _indexseleccionado = 0;
   PageController pageController = new PageController();
   void _onItemTapped(int index) {
+    if (index == 1) {
+      Navigator.pushReplacementNamed(context, 'createRoute');
+    }
     if (index == 2) {
       Navigator.pushReplacementNamed(context, 'tripHistory');
     }
@@ -27,8 +27,8 @@ class HomePageState extends State<HomePage> {
       _indexseleccionado = index;
     });
   }
-  Completer<GoogleMapController> _controller = Completer();
 
+  Completer<GoogleMapController> _controller = Completer();
 
   double latitude = 4.72;
   double longitude = -72.76;
@@ -38,7 +38,6 @@ class HomePageState extends State<HomePage> {
   bool updateCamera = true;
 
   Set<Marker> markers = Set();
-
 
   @override
   void initState() {
@@ -89,7 +88,6 @@ class HomePageState extends State<HomePage> {
           zoom: 14.4746,
         ),
         onMapCreated: (GoogleMapController controller) {
-
           _controller.complete(controller);
           location.onLocationChanged.listen((l) {
             locationbloc.changeCurrentloc(l);
@@ -127,5 +125,4 @@ class HomePageState extends State<HomePage> {
       ),
     );
   }
-
 }
