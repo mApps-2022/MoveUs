@@ -17,6 +17,9 @@ class HomePageState extends State<HomePage> {
   int _indexseleccionado = 0;
   PageController pageController = new PageController();
   void _onItemTapped(int index) {
+    if (index == 2) {
+      Navigator.pushReplacementNamed(context, 'tripHistory');
+    }
     setState(() {
       _indexseleccionado = index;
     });
@@ -108,7 +111,8 @@ class HomePageState extends State<HomePage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Carrro'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Historial de viajes'),
+          //Navigator.pushReplacementNamed(context, 'tripHistory');
           BottomNavigationBarItem(icon: Icon(Icons.message_rounded), label: 'Mensajes')
         ],
         currentIndex: _indexseleccionado,

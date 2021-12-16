@@ -1,5 +1,6 @@
 // ignore_for_file: argument_type_not_assignable_to_error_handler
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -13,6 +14,7 @@ import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
 
 import 'package:front_end/src/Logic/utils/auth_utils.dart';
 import 'package:front_end/src/View/pages/Login/lower_buttons.dart';
+import 'package:front_end/src/View/widgets/shared/utils/button_widget.dart';
 import 'package:provider/src/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -60,12 +62,82 @@ class _LoginPageState extends State<LoginPage> {
                   builder: (context, snapshot) {
                     return form(loginBloc);
                   }),
+              _forgotPassword(),
               _paddingField(ButtonsWidget(bloc: loginBloc)),
               _paddingField(_googleLoginButton(context)),
+              _createAccount(),
             ],
           ),
         )
       ],
+    );
+  }
+
+  Container _forgotPassword() {
+    TextStyle linkStyle = TextStyle(
+      fontSize: 14,
+      fontFamily: 'OpenSans',
+      color: Color.fromRGBO(83, 232, 139, 1),
+      fontWeight: FontWeight.w400,
+    );
+    return Container(
+      padding: EdgeInsets.only(top: 10, right: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                    text: 'Forgot your password?',
+                    style: linkStyle,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushReplacementNamed(context, 'forgotPass');
+                      }),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container _createAccount() {
+    TextStyle defaultStyle = TextStyle(
+      fontSize: 14,
+      fontFamily: 'OpenSans',
+      color: Color.fromRGBO(9, 5, 28, 1),
+      fontWeight: FontWeight.w400,
+    );
+    TextStyle linkStyle = TextStyle(
+      fontSize: 14,
+      fontFamily: 'OpenSans',
+      color: Color.fromRGBO(83, 232, 139, 1),
+      fontWeight: FontWeight.w400,
+    );
+    return Container(
+      padding: EdgeInsets.only(top: 20, right: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RichText(
+            text: TextSpan(
+              style: defaultStyle,
+              children: <TextSpan>[
+                TextSpan(text: 'Don\'t have an account? '),
+                TextSpan(
+                    text: 'Create a new account',
+                    style: linkStyle,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushReplacementNamed(context, 'register');
+                      }),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -85,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       children: [
         _paddingField(_emailField(loginBloc)),
-        _paddingField(_phoneField(loginBloc)),
+        //_paddingField(_phoneField(loginBloc)),
         _paddingField(_passwordField(loginBloc)),
       ],
     );
@@ -115,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailField(LoginBloc loginBloc) {
     return TextField(
       decoration: _decorationField(
-          dotenv.get('PRUEBA'),
+          S.of(context).login_email_field_label,
           Icon(
             Icons.email,
             color: Colors.grey,
