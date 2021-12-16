@@ -26,8 +26,8 @@ class _TravelHistoryDetailState extends State<TravelHistoryDetail> {
   Set<Polyline> _polylines = Set<Polyline>();
   List<LatLng> polylineCoordinates = [];
   late PolylinePoints polylinePoints;
-  double destinylatitude = 9.647960;
-  double destinylongitude = -74.089647;
+  double destinylatitude = 4.616030;
+  double destinylongitude = -74.068076;
 
   @override
   void initState() {
