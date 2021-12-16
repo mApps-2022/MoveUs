@@ -75,7 +75,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       children: [
         FutureBuilder(
             future: getUserInformation(FirebaseAuth.instance.currentUser!.uid),
-            builder: (BuildContext context, AsyncSnapshot<List<CreditCard>> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<List<Object>> snapshot) {
               if (snapshot.hasData) {
                 return getCards(snapshot);
               }
@@ -85,9 +85,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  ListView getCards(AsyncSnapshot<List<CreditCard>> snapshot) {
+  ListView getCards(AsyncSnapshot<List<Object>> snapshot) {
     print(snapshot.data);
-    List<CreditCard> cards = snapshot.data!;
+    List<CreditCard> res = [];
+    List<Object> cards = snapshot.data!;
+    for (Object? card in cards) {
+      res.add(CreditCard.fromJson(card as Map));
+    }
     return ListView.builder(
         shrinkWrap: true,
         itemCount: cards.length,
@@ -101,13 +105,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   leading: Padding(
                       padding: EdgeInsets.only(left: 15.0),
                       child: Image(
-                        image: (cards[index].Brand == "MasterCard")
+                        image: (res[index].Brand == "MasterCard")
                             ? NetworkImage("https://pbs.twimg.com/profile_images/1410611681303023621/HDtqy0Oq_400x400.jpg")
                             : NetworkImage("https://belybula.com/wp-content/uploads/2019/04/Visa-Logo-Free-Download-PNG.png"),
                       )),
                   contentPadding: EdgeInsets.only(top: 10.0),
-                  title: Text('Soy el titulo de esta tarjeta'),
-                  subtitle: Text('a'),
+                  title: Text(res[index].Brand),
+                  subtitle: Text(res[index].expDate),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -156,14 +160,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Future<List<CreditCard>> getUserInformation(String uid) async {
+  Future<List<Object>> getUserInformation(String uid) async {
     User? user = FirebaseAuth.instance.currentUser;
-    List<CreditCard> cards = [];
+    List<Object> cards = [];
     CollectionReference userCards = FirebaseFirestore.instance.collection("PaymentInfo").doc(user!.uid).collection("Cards");
     await userCards.get().then((value) {
       for (QueryDocumentSnapshot<Object?> card in value.docs) {
-        print(CreditCard.fromJson(card.data() as Map));
-        cards.add(CreditCard.fromJson(card.data() as Map));
+        cards.add(card.data()!);
       }
     });
     return cards;
@@ -174,41 +177,3 @@ class _UserProfilePageState extends State<UserProfilePage> {
     payments.doc(user.uid).set(user);
   }
 }
-
-/*
-ListView.builder(
-          scrollDirection: Axis.vertical,
-          itemCount: cards.length,
-          itemBuilder: (context, index) {
-            return Card(
-              elevation: 10.0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-              child: Column(
-                children: <Widget>[
-                  ListTile(
-                    leading: Padding(
-                        padding: EdgeInsets.only(left: 15.0),
-                        child: Image(
-                          image: NetworkImage("https://pbs.twimg.com/profile_images/1410611681303023621/HDtqy0Oq_400x400.jpg"),
-                        )),
-                    contentPadding: EdgeInsets.only(top: 10.0),
-                    title: Text('Soy el titulo de esta tarjeta'),
-                    subtitle: Text('a'),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(right: 20.0),
-                        child: TextButton(
-                          child: Text('Detalle'),
-                          onPressed: () {},
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            );
-          })
-*/
