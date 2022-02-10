@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Logic/bloc/LocationBloc.dart';
 import 'package:front_end/src/Logic/provider/ProviderBlocs.dart';
@@ -28,10 +30,73 @@ class CreateRouteState extends State<CreateRoute> {
     });
   }
 
+  void getUserInformation() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    DocumentReference Rutas_usuario = FirebaseFirestore.instance.collection("Rutas").doc(user!.uid);
+    await Rutas_usuario.get().then((value) {
+        viajes=(value.data() as Map<String, Object>)!;
+        crearPuntos();
+    });
+
+  }
+
+  void crearPuntos(){
+    if(firstTime){
+      for(int i =0;i<viajes.length;i++){
+        Map<String,Object> ruta=viajes[i.toString()] as Map<String, Object>;
+        Map<String,Object> puntos=ruta['puntos'] as Map<String, Object>;
+        List<dynamic>? inicio=puntos['0'] as List?;
+        LatLng inicio1= LatLng(inicio![0],inicio![1]);
+        print('---------dasdsadas-------------------------------------------------------------');
+        print(inicio1);
+        markers.add(Marker(
+          markerId: MarkerId(inicio1.toString()),
+          position: inicio1,
+        ));
+        List<dynamic>? inicio2=puntos[(puntos.length-1).toString()] as List?;
+        print((ruta.length-1).toString());
+        LatLng inicio3= LatLng(inicio2![0],inicio2![1]);
+        print('---------dasdsadas-------------------------------------------------------------');
+        print(inicio3);
+        markers.add(Marker(
+          markerId: MarkerId(inicio3.toString()),
+          position: inicio3,
+        ));
+        List<LatLng> listapuntos=[];
+        for(int i=0;i<puntos.length;i++){
+          List<dynamic>? inicio2=puntos[i.toString()] as List?;
+          LatLng inicio3= LatLng(inicio2![0],inicio2![1]);
+          listapuntos.add(inicio3);
+        }
+        polylineCoordinatesList.add(listapuntos);
+        polylines.add(Polyline(
+          width: 3,
+          polylineId: PolylineId(polylines.length.toString()) ,
+          color: Colors.blue,
+          points: polylineCoordinatesList[polylines.length],
+        ));
+        _controller.isCompleted;
+      }
+
+    }
+  }
+
+  static void setRutaInformation({ required Map<String,Object> viajes}) {
+    CollectionReference rutas = FirebaseFirestore.instance.collection('Rutas');
+    User? user = FirebaseAuth.instance.currentUser;
+
+    rutas.doc(user!.uid).set(viajes).then((value) => print("Valor de retorno de la base de datos: retorno BD"))
+      ..catchError((e) => print("Error subiendo la información del viaje: $e"));
+  }
+
+  DateTime selectedDate = DateTime.now();
+  TimeOfDay horaElegida =TimeOfDay.now();
+
   Completer<GoogleMapController> _controller = Completer();
 
   double latitude = 4.72;
   double longitude = -72.76;
+  Map<String,Object> viajes={};
 
   double firstLatitude = 4.72;
   double firstLongitude = -72.76;
@@ -50,10 +115,12 @@ class CreateRouteState extends State<CreateRoute> {
 
   Set<Marker> markers = Set();
 
+
   // this will hold the generated polylines
   Set<Polyline> polylines = {};
 // this will hold each polyline coordinate as Lat and Lng pairs
   List<LatLng> polylineCoordinates = [];
+  List<List<LatLng>>polylineCoordinatesList=[];
 // this is the key object - the PolylinePoints
 // which generates every polyline between start and finish
   PolylinePoints polylinePoints = PolylinePoints();
@@ -88,7 +155,11 @@ class CreateRouteState extends State<CreateRoute> {
     longitude = _currentPosition.longitude!.toDouble();
   }
 
+
+
+
   setPolylines() async {
+    List<LatLng> cooraux = [];
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         apiKey, // Google Maps API Key
         PointLatLng(firstLatitude, firstLongitude),
@@ -96,18 +167,87 @@ class CreateRouteState extends State<CreateRoute> {
         travelMode: TravelMode.driving);
     if (result.status == 'OK') {
       result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(
+        cooraux.add(
           LatLng(point.latitude, point.longitude),
         );
       });
+
+      polylineCoordinatesList.add(cooraux);
+
+
+
+
       setState(() {
         polylines.add(Polyline(
           width: 3,
-          polylineId: PolylineId('polyline'),
+          polylineId: PolylineId(polylines.length.toString()) ,
           color: Colors.blue,
-          points: polylineCoordinates,
+          points: polylineCoordinatesList[polylines.length],
         ));
       });
+
+
+
+
+      final DateTime? picked = await showDatePicker(
+          context: context,
+
+          initialDate: selectedDate,
+          firstDate: DateTime(2015, 8),
+          lastDate: DateTime(2101));
+      if (picked != null )
+        setState(() {
+          selectedDate = picked;
+        });
+
+      final TimeOfDay? newTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now());
+      if (newTime != null )
+      setState(() {
+        horaElegida = newTime;
+      }
+      );
+
+      Duration duracion=Duration(hours: newTime!.hour,minutes: newTime!.minute);
+
+      DateTime auxFecha=selectedDate.add(duracion);
+      print(auxFecha);
+      Map<String,Object> puntos={};
+      int index=0;
+      polylineCoordinatesList[polylines.length-1].forEach((element) {
+        puntos.putIfAbsent(index.toString(), () => element.toJson());
+        index++;
+      });
+      Map<String,Object> rutaActual={
+        'fecha_hora':auxFecha,
+        'puntos':puntos
+      };
+
+
+      viajes.putIfAbsent((polylines.length-1).toString(), () => rutaActual);
+
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Alerta publicar viaje'),
+          content: const Text('¿deseas publicar viaje?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => {
+                viajes.remove((polylines.length-1).toString()),
+                Navigator.pop(context, 'Cancelar')},
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => {
+                setRutaInformation(viajes: viajes),
+                Navigator.pop(context, 'Sí')},
+              child: const Text('Sí'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -130,14 +270,20 @@ class CreateRouteState extends State<CreateRoute> {
           zoom: 14.4746,
         ),
         onMapCreated: (GoogleMapController controller) {
+          getUserInformation();
+
+
+          print(viajes.length);
           _controller.complete(controller);
           location.onLocationChanged.listen((l) {
+
             locationbloc.changeCurrentloc(l);
             if (firstTime) {
               Marker resultMarker = Marker(
                 markerId: MarkerId("me"),
                 infoWindow: InfoWindow(title: "me", snippet: "me"),
-                position: LatLng(locationbloc.currentloc!.latitude!.toDouble(), locationbloc.currentloc!.longitude!.toDouble()),
+                position: LatLng(locationbloc.currentloc!.latitude!.toDouble(),
+                    locationbloc.currentloc!.longitude!.toDouble()),
               );
               markers.add(resultMarker);
               firstTime = false;
@@ -147,15 +293,28 @@ class CreateRouteState extends State<CreateRoute> {
             if (updateCamera) {
               controller.animateCamera(
                 CameraUpdate.newCameraPosition(
-                  CameraPosition(target: LatLng(locationbloc.currentloc!.latitude!.toDouble(), locationbloc.currentloc!.longitude!.toDouble()), zoom: 15),
+                  CameraPosition(target: LatLng(
+                      locationbloc.currentloc!.latitude!.toDouble(),
+                      locationbloc.currentloc!.longitude!.toDouble()),
+                      zoom: 15),
                 ),
               );
               updateCamera = false;
             }
-          });
+
+
+          }
+
+
+          );
+
+
+
+
         },
         onTap: (LatLng latLng) {
           setState(() {
+
             if (second) {
               secondLatitude = firstLatitude;
               secondLongitude = firstLongitude;
@@ -170,9 +329,14 @@ class CreateRouteState extends State<CreateRoute> {
 
             if (second) {
               setPolylines();
+              second=false;
+              selectedDate = DateTime.now();
+              polylineCoordinates.clear();
+
             } else {
               second = true;
             }
+
           });
         },
       ),
